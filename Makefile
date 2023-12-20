@@ -15,6 +15,7 @@ help: ## Show this help
 
 install: ## Install all app dependencies
 	docker-compose run $(DC_RUN_ARGS) --no-deps osutap composer install --ansi --prefer-dist
+	APP_UID=$(shell id -u) APP_GID=$(shell id -g) docker-compose run npm install
 
 shell: ## Start shell into app container
 	docker-compose run $(DC_RUN_ARGS) osutap sh
@@ -22,6 +23,7 @@ shell: ## Start shell into app container
 init: ## Make full application initialization
 	docker-compose run $(DC_RUN_ARGS) osutap php ./artisan migrate --force --seed
 	docker-compose run $(DC_RUN_ARGS) osutap php ./artisan cache:clear
+	APP_UID=$(shell id -u) APP_GID=$(shell id -g) docker-compose run npm run build
 	-docker-compose run $(DC_RUN_ARGS) --no-deps osutap php ./artisan storage:link
 
 up: ## Create and start containers
@@ -34,7 +36,9 @@ down: ## Stop containers
 restart: down up ## Restart all containers
 
 clean: ## Make clean
-	-docker-compose run $(DC_RUN_ARGS) --no-deps app sh -c "\
+	-docker-compose run $(DC_RUN_ARGS) --no-deps osutap sh -c "\
 		php ./artisan config:clear; php ./artisan route:clear; php ./artisan view:clear; php ./artisan cache:clear file"
 	rm public/storage
+	rm -rf node_modules
+	rm -rf public/build
 	docker-compose down -v # Stops containers and remove named volumes declared in the `volumes` secti

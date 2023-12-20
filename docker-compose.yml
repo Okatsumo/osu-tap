@@ -62,7 +62,7 @@ services:
           - osu_tap_network
 
   mysql:
-    image: mariadb:10.8.2-rc-focal
+    image: mariadb:10.8.2-rc-focal #image page: <https://hub.docker.com/_/mariadb>
     restart: unless-stopped
     volumes:
         - mysql-data:/var/lib/mysql
@@ -81,3 +81,16 @@ services:
         start_period: 10s
     networks:
       - osu_tap_network
+
+  npm:
+      image: node:20.10.0 #image page: <https://hub.docker.com/_/node>
+      container_name: npm
+      user: "${APP_UID:-10001}:${APP_GID:-10001}"
+      volumes:
+          - .:/app:rw
+      ports:
+          - "5173:5173"
+      working_dir: /app
+      entrypoint: ['npm']
+      networks:
+          - osu_tap_network
