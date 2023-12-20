@@ -1,0 +1,83 @@
+version: '3'
+
+networks:
+  osu_tap_network:
+
+volumes:
+    mysql-data: {}
+    tmp-data: {}
+
+services:
+  osutap: &app
+      build:
+          context: .
+          dockerfile: php.dockerfile
+      user: "${APP_UID:-10001}:${APP_GID:-10001}"
+      environment:
+          APP_DEBUG: 'true'
+          APP_ENV: local
+          REDIS_HOST: redis
+          REDIS_PASSWORD: redis_password
+          DB_HOST: mysql
+          DB_CONNECTION: mysql
+          DB_DATABASE: osutap
+          DB_USERNAME: forge
+          DB_PASSWORD: forge
+      volumes:
+          - /etc/passwd:/etc/passwd:ro
+          - /etc/group:/etc/group:ro
+          - tmp-data:/tmp:rw
+          - .:/app:rw
+      depends_on:
+          mysql: {condition: service_healthy}
+      networks:
+          - osu_tap_network
+
+  queue:
+      <<: *app
+      command: php /app/artisan queue:work --memory=256 --sleep=1
+
+  cron:
+      <<: *app
+      command: supercronic /etc/supercronic/laravel # it runs artisan schedule:run
+
+  web:
+      build:
+          context: .
+          dockerfile: nginx.dockerfile
+      ports:
+          - "8080:8080"
+      volumes:
+          - /etc/passwd:/etc/passwd:ro
+          - /etc/group:/etc/group:ro
+          - .:/app:rw
+      depends_on:
+          - osutap
+      healthcheck: # Healthcheck docs: <https://docs.docker.com/engine/reference/builder/#healthcheck>
+          test: [ "CMD", "service", "nginx", "status" ]
+          interval: 15s
+          timeout: 15s
+          start_period: 10s
+      networks:
+          - osu_tap_network
+
+  mysql:
+    image: mariadb:10.8.2-rc-focal
+    restart: unless-stopped
+    volumes:
+        - mysql-data:/var/lib/mysql
+    tty: true
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_DATABASE: osutap
+      MYSQL_USER: ${MYSQL_USER:-forge}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:-forge}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-forge}
+    healthcheck: # Healthcheck docs: <https://docs.docker.com/engine/reference/builder/#healthcheck>
+        test: [ "CMD", 'mysqladmin', 'ping', '-u', 'root', '-p$$MYSQL_ROOT_PASSWORD' ]
+        interval: 15s
+        timeout: 15s
+        start_period: 10s
+    networks:
+      - osu_tap_network
