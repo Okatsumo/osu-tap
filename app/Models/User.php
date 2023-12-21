@@ -33,6 +33,16 @@ class User extends Authenticatable
         'remember_token',
     ];
 
+
+    public function isAdmin(): bool
+    {
+        if($this->admin) {
+            return true;
+        }
+
+        return false;
+    }
+
     /**
      * The attributes that should be cast.
      *
