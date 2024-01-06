@@ -89,7 +89,7 @@ services:
       volumes:
           - .:/app:rw
       ports:
-          - "5173:5173"
+          - "8085:8085"
       working_dir: /app
       entrypoint: ['npm']
       networks:
