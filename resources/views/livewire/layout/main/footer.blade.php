@@ -1,17 +1,24 @@
-<footer class="bg-white shadow dark:bg-gray-800">
-    <div class="w-full mx-auto max-w-screen-xl p-4 md:flex md:items-center md:justify-between">
-      <span class="text-sm text-gray-500 sm:text-center dark:text-gray-400"> <a href="#" class="hover:underline">{{config('app.name')}}</a>
-    </span>
-        <ul class="flex flex-wrap items-center mt-3 text-sm font-medium text-gray-500 dark:text-gray-400 sm:mt-0">
-            <li>
-                <a href="#" class="hover:underline me-4 md:me-6">О проекте</a>
-            </li>
-            <li>
-                <a href="#" class="hover:underline me-4 md:me-6">Исходный код</a>
-            </li>
-            <li>
-                <a href="#" class="hover:underline">Контакты</a>
-            </li>
-        </ul>
+<footer>
+    <div class="footer__content container">
+        <div class="footer__col footer__about">
+            <h1 class="footer__col--name">
+                OSU!<span>Tap</span>
+            </h1>
+            <p>Поиск карт для фарма, просмотр топовых скоров, а так же загрузка карт для OSU! без регистрации</p>
+        </div>
+        <div class="footer__col">
+            <h1>Навигация</h1>
+            <ul>
+                <li><a href="#">Карты</a></li>
+                <li><a href="#">Скоры</a></li>
+            </ul>
+        </div>
+        <div class="footer__col">
+            <h1>О проекте</h1>
+            <ul>
+                <li><a href="#">Разработчики</a></li>
+                <li><a href="#">Контакты</a></li>
+            </ul>
+        </div>
     </div>
 </footer>

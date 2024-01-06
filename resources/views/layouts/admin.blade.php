@@ -34,5 +34,5 @@
         </div>
     </body>
 
-    <livewire:layout.main.footer />
+{{--    <livewire:layout.main.footer />--}}
 </html>
