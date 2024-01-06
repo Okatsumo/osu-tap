@@ -16,7 +16,7 @@
     </head>
     <body class="font-sans antialiased">
         <div class="min-h-screen bg-gray-100 dark:bg-gray-900">
-            <livewire:layout.navigation />
+            <livewire:layout.admin.navigation />
 
             <!-- Page Heading -->
             @if (isset($header))
@@ -33,4 +33,6 @@
             </main>
         </div>
     </body>
+
+    <livewire:layout.main.footer />
 </html>

@@ -75,7 +75,7 @@ services:
       MYSQL_PASSWORD: ${MYSQL_PASSWORD:-forge}
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-forge}
     healthcheck: # Healthcheck docs: <https://docs.docker.com/engine/reference/builder/#healthcheck>
-        test: [ "CMD", 'mysqladmin', 'ping', '-u', 'root', '-p$$MYSQL_ROOT_PASSWORD' ]
+        test: [ "CMD", 'mysqladmin', 'ping', '-u', 'osutap', '-p$$MYSQL_PASSWORD' ]
         interval: 15s
         timeout: 15s
         start_period: 10s
