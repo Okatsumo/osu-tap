@@ -76,6 +76,9 @@ RUN set -x \
     && mkdir /app \
     && chown -R appuser:appuser /app
 
+# copy php ini file
+RUN cp /usr/local/etc/php/php.ini-production /usr/local/etc/php/php.ini
+
 # use an unprivileged user by default
 USER appuser:appuser
 
