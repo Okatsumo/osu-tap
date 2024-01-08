@@ -39,7 +39,6 @@ RUN set -x \
         gd \
         pdo_mysql \
         sockets \
-        opcache \
         pcntl \
         intl \
         1>/dev/null \
@@ -62,9 +61,6 @@ RUN set -x \
     && docker-php-source delete \
     && apk del .build-deps \
     && rm -R /tmp/pear \
-    # enable opcache for CLI and JIT, docs: <https://www.php.net/manual/en/opcache.configuration.php#ini.opcache.jit>
-    && echo -e "\nopcache.enable=1\nopcache.enable_cli=1\nopcache.jit_buffer_size=32M\nopcache.jit=1235\n" >> \
-        ${PHP_INI_DIR}/conf.d/docker-php-ext-opcache.ini \
     # show installed PHP modules
     && php -m \
     # create unprivileged user
