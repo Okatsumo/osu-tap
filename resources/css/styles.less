@@ -40,6 +40,10 @@
 }
 a, h1, h2, h3, h4, h5, h6 {
     color: @color;
+    text-decoration: none;
+}
+a:hover {
+    color: @color-hover;
 }
 input:checked + label {
     color: @color-hover
@@ -178,6 +182,15 @@ nav {
     height: 100%;
     width: 100%;
 }
+.beatmaps__item__title {
+    font-weight: bold;
+    font-size: 18px;
+}
+.beatmaps__item__artist {
+    font-weight: bold;
+    font-size: 12px;
+    //margin-left: 2px;
+}
 .beatmaps__item__images-information {
     background-image: url('/assets/map_card.jpg');
     height: 100%;
@@ -246,7 +259,7 @@ nav {
     flex: 1;
     flex-direction: column;
     min-width: 10px;
-    padding: 4px 10px 6px;
+    padding: 8px;
     position: relative;
 }
 .beatmaps__items-row {

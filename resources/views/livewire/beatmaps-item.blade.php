@@ -17,9 +17,9 @@
 
             </div>
             <div class="beatmaps__item__content-info">
-                <p>{{$title}}</p>
-                <p>От {{$artist}}</p>
-                <p>Маппер: {{}}</p>
+                <a class="beatmaps__item__title" href="#">{{$title}}</a>
+                <a class="beatmaps__item__artist" href="#">От {{$artist}}</a>
+                <p>Маппер: пока что нет</p>
             </div>
 
             <div class="beatmaps__item__content-background">
