@@ -100,7 +100,7 @@ nav {
     text-transform: uppercase;
     text-decoration: none;
     color: #FFF;
-    font-size: 18px;
+    font-size: 14px;
 }
 .nav__col {
     text-align: center;
@@ -127,7 +127,7 @@ nav {
 .content__title {
     background: @background-color;
     padding: 14px 32px 14px 32px;
-    border-radius: 8px 8px 0px 0px;
+    border-radius: 8px 8px 0 0;
     display: flex;
     justify-content: flex-start;
 }
@@ -362,5 +362,28 @@ footer {
     }
     .footer__col {
         width: 100%;
+    }
+}
+
+
+.pagination {
+    list-style: none;
+
+    li {
+        display: inline;
+        padding: 4px;
+        background: @background-color;
+        text-decoration: none;
+        //border-radius: 20%;
+    }
+
+    .disabled {
+        margin-right: 8px;
+    }
+    .previous {
+        margin-right: 8px;
+    }
+    .next {
+        margin-left: 8px;
     }
 }

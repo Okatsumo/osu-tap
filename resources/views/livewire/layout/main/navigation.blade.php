@@ -14,18 +14,18 @@
             </div>
         </div>
 
-        <div class="nav__col">
+        <div class="nav__col nav__menu--link">
             @if (Route::has('login'))
                 @auth
                     @if(auth()->user()->isAdmin())
-                        <a href="{{ url('/dashboard') }}" class="font-semibold text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white focus:outline focus:outline-2 focus:rounded-sm focus:outline-red-500" wire:navigate>Панель администратора</a>
+                        <a href="{{ url('/dashboard') }}">Панель администратора</a>
                     @endif
                 @else
-                    <a href="{{ route('login') }}" class="font-semibold text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white focus:outline focus:outline-2 focus:rounded-sm focus:outline-red-500">Авторизация</a>
+                    <a href="{{ route('login') }}">Авторизация</a>
 
 
                     @if (Route::has('register'))
-                        <a href="{{ route('register') }}" class="ms-4 font-semibold text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white focus:outline focus:outline-2 focus:rounded-sm focus:outline-red-500" wire:navigate>Регистрация</a>
+                        <a href="{{ route('register') }}">Регистрация</a>
                     @endif
                 @endauth
             @endif
