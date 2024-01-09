@@ -6,15 +6,15 @@
                 <x-nav-link :href="route('home')" :active="request()->routeIs('scores')"><i class="bi bi-globe-americas nav__menu--logo"></i></x-nav-link>
             </div>
 
-            <div class="nav__menu--link nav__col">
-                <x-nav-link :href="route('scores')" :active="request()->routeIs('scores')" wire:navigate>Скоры</x-nav-link>
+            <div class="nav__menu--item nav__col">
+                <x-nav-link :href="route('scores')" :active="request()->routeIs('scores')" class="nav__menu--link" wire:navigate>Скоры</x-nav-link>
             </div>
-            <div class="nav__menu--link nav__col">
-                <x-nav-link :href="route('maps')" :active="request()->routeIs('scores')" wire:navigate>Карты</x-nav-link>
+            <div class="nav__menu--item nav__col">
+                <x-nav-link :href="route('maps')" :active="request()->routeIs('scores')" class="nav__menu--link" wire:navigate>Карты</x-nav-link>
             </div>
         </div>
 
-        <div class="nav__col nav__menu--link">
+        <div class="nav__col nav__menu--item">
             @if (Route::has('login'))
                 @auth
                     @if(auth()->user()->isAdmin())
