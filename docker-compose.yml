@@ -37,7 +37,7 @@ services:
 
   queue:
       <<: *app
-      command: php /app/artisan queue:work --memory=256 --sleep=1
+      command: php /app/artisan queue:work --memory=512 --sleep=1
 
   cron:
       <<: *app
