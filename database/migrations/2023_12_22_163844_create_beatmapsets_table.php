@@ -23,16 +23,16 @@ return new class extends Migration
             $table->string('preview_url'); //mp3 file
             $table->string('source');
             $table->boolean('spotlight')->nullable(false);
-            $table->enum('status', ['ranked', 'qualified', 'disqualified', 'never_qualified'])->nullable(false);
+            $table->enum('status', ['ranked', 'qualified', 'disqualified', 'never_qualified', 'approved'])->nullable(false);
             $table->string('title')->nullable(false);
             $table->string('title_unicode');
             $table->integer('user_id')->nullable(false);
             $table->boolean('video')->default(false)->nullable(false);
             $table->float('bpm')->nullable(false);
             $table->integer('ranked')->nullable(false)->default(0);
-            $table->dateTime('ranked_date')->nullable(false);
+            $table->dateTime('ranked_date')->nullable(true)->default(null);
             $table->boolean('storyboard')->nullable(false);
-            $table->dateTime('submitted_date');
+            $table->dateTime('submitted_date')->default(null)->nullable(true);
             $table->text('tags');
         });
     }
