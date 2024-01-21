@@ -12,7 +12,7 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule): void
     {
-        app(\App\Base\Schedule\Schedule::class)->run();
+        app(\App\Base\Schedule\Schedule::class)->run($schedule);
     }
 
     /**

@@ -7,7 +7,6 @@ class Schedule
 {
     private \Illuminate\Console\Scheduling\Schedule $schedule;
 
-
     /**
      *  Запуск очередей
      */
