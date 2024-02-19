@@ -39,7 +39,7 @@ return [
         'scopes'            => env('OSU_SCOPES', 'public'),
         'token'             => env('OSU_TOKEN'),
         'throttle_settings' => [
-            'attempt_count' => 4,
+            'attempt_count' => 180,
             'time_out' => 60,
         ]
     ]
