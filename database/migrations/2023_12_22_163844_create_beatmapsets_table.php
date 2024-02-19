@@ -13,10 +13,9 @@ return new class extends Migration
     {
         Schema::create('beatmapsets', function (Blueprint $table) {
             $table->id();
-            $table->timestamps();
             $table->string('artist')->nullable(false);
             $table->string('artist_unicode');
-            $table->string('cover'); // cover files
+            $table->string('cover'); // cover Files
             $table->string('creator')->nullable(false);
             $table->boolean('nsfw')->nullable(false)->default(true);
             $table->string('play_count')->nullable(false)->default(0);
@@ -30,9 +29,10 @@ return new class extends Migration
             $table->boolean('video')->default(false)->nullable(false);
             $table->float('bpm')->nullable(false);
             $table->integer('ranked')->nullable(false)->default(0);
-            $table->dateTime('ranked_date')->nullable(true)->default(null);
+            $table->dateTime('ranked_date')->default(null);
             $table->boolean('storyboard')->nullable(false);
-            $table->dateTime('submitted_date')->default(null)->nullable(true);
+            $table->dateTime('submitted_date')->default(null);
+            $table->dateTime('last_updated')->default(null);
             $table->text('tags');
         });
     }

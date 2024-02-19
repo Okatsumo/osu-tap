@@ -3,6 +3,10 @@
 namespace App\Services\Api;
 
 use \App\Contracts\Services\Api\ApiThrottle as ApiThrottleContract;
+use Illuminate\Contracts\Cache\Store;
+use Psr\Container\ContainerExceptionInterface;
+use Psr\Container\NotFoundExceptionInterface;
+use Psr\SimpleCache\InvalidArgumentException;
 
 class ApiThrottle implements ApiThrottleContract
 {
@@ -16,8 +20,7 @@ class ApiThrottle implements ApiThrottleContract
     /**
      * Кеш.
      */
-    protected \Illuminate\Contracts\Cache\Repository $cache;
-
+    protected \Illuminate\Contracts\Cache\Repository|Store $cache;
 
     public function __construct(string $api_name, array $throttle_settings)
     {
@@ -29,12 +32,20 @@ class ApiThrottle implements ApiThrottleContract
     /**
      * Проверка разрешения на обращение к api.
      * Если true, то тротлинг активен, в ином случае будет возвращено false
+     * @return bool
+     * @throws ContainerExceptionInterface
+     * @throws InvalidArgumentException
+     * @throws NotFoundExceptionInterface
      */
     public function check(): bool
     {
         $key = $this->getKey();
 
         if ($this->cache->has($key)) {
+
+            if ($this->cache->get($key.':FailTimeOut')) {
+                return true;
+            }
 
             /**
              * Количество отправленных запросов к api не привышает заданное количество.
@@ -59,6 +70,9 @@ class ApiThrottle implements ApiThrottleContract
         return false;
     }
 
+    /**
+     * @throws InvalidArgumentException
+     */
     public function addCount(): void
     {
         $key = $this->getKey();
@@ -73,16 +87,61 @@ class ApiThrottle implements ApiThrottleContract
         }
     }
 
+    /**
+     * @throws NotFoundExceptionInterface
+     * @throws ContainerExceptionInterface
+     * @throws InvalidArgumentException
+     */
     public function getTimeOut(): int
     {
         $key = $this->getKey();
 
         if ($this->cache->has($key)) {
+            $count = $this->getCount();
+            $attemptCount = $this->throttle_settings['attempt_count'];
+
+            /**
+             * Троттлинг активен.
+             */
+            if ($count > $attemptCount) {
+                $failTimeOutKey = $key.':FailTimeOut';
+
+                if ($this->cache->has($failTimeOutKey)) {
+                    /**
+                     * Увеличение времени блокировки для последующих задач
+                     */
+                    $multiplier = ceil($count / $attemptCount);
+                    $timeOut = $this->cache->get($failTimeOutKey) + ($multiplier * $this->throttle_settings['time_out']) - time();
+                } else {
+                    /**
+                     * Первое нарушение, устанавливаем время блокировки
+                     */
+                    $timeOut = $this->cache->get($key.':TimeOut') + $this->throttle_settings['time_out'] - time();
+                    $this->cache->put($failTimeOutKey, time() + $timeOut, $timeOut);
+                }
+
+                return $timeOut;
+            }
+
+            /**
+             * Если троттлинг не активен, возвращаем время до окончания текущего TimeOut
+             */
             return $this->cache->get($key.':TimeOut') + $this->throttle_settings['time_out'] - time();
-        } else {
-            return 0;
         }
 
+        return 0;
+    }
+
+    /**
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
+     * @throws InvalidArgumentException
+     */
+    protected function getCount(): int
+    {
+        $key = $this->getKey();
+
+        return $this->cache->get($key);
     }
 
     /**
@@ -91,19 +150,5 @@ class ApiThrottle implements ApiThrottleContract
     protected function getKey(): string
     {
         return 'ApiThrottle:'.$this->api_name;
-    }
-
-    /**
-     * Проверка наличия тротлинга, и, в случае если его нет, добавление в него 1 попытки
-     * если true, то тротлинг активен, в ином случае будет возвращено false
-     */
-    public function checkAndAddCount(): bool
-    {
-        if ($this->check()) {
-            return true;
-        }
-
-        $this->addCount();
-        return false;
     }
 }

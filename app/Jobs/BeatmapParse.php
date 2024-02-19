@@ -2,6 +2,7 @@
 
 namespace App\Jobs;
 
+use App\Exceptions\OperationError;
 use App\Services\Api\ApiThrottle;
 use App\Services\Osu\Parser;
 use Illuminate\Bus\Queueable;
@@ -9,6 +10,10 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Log;
+use Psr\Container\ContainerExceptionInterface;
+use Psr\Container\NotFoundExceptionInterface;
+use Psr\SimpleCache\InvalidArgumentException;
 
 class BeatmapParse implements ShouldQueue
 {
@@ -49,14 +54,20 @@ class BeatmapParse implements ShouldQueue
     {
         $this->prepare();
 
-        if ($this->apiThrottle->check()) {
-            $this->release($this->apiThrottle->getTimeOut() + 5);
-        }
-        else {
-            $parser = new Parser();
-            $parser->parseBeatmapsets($this->page);
-
+        try {
             $this->apiThrottle->addCount();
+
+            if ($this->apiThrottle->check()) {
+                $this->release($this->apiThrottle->getTimeOut());
+            }
+            else {
+                $parser = new Parser();
+                $parser->parseBeatmapsets($this->page);
+            }
+
+        } catch (InvalidArgumentException|NotFoundExceptionInterface|ContainerExceptionInterface|OperationError $e) {
+            $this->fail($e);
+            Log::error('Osu beatmapsets parser exception => '.$e);
         }
     }
 }

@@ -2,10 +2,8 @@
 
 namespace App\Console\Commands;
 
-use App\Services\Api\ApiThrottle;
 use App\Services\Osu\Parser\OsuParser;
 use Illuminate\Console\Command;
-use Illuminate\Support\Facades\Config;
 
 class parser extends Command
 {
@@ -27,11 +25,8 @@ class parser extends Command
     /**
      * Execute the console command.
      */
-    public function handle()
+    public function handle(): void
     {
-        // сначала парсер должен чекнуть че там по тротлингу, чекнуть в Redis timestamp и отложить очередь, если сработал тротлинг
-        //, в противном случае запустить парсер
-
         $parser = new OsuParser();
         $parser->parseBeatmapsets();
     }

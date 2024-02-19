@@ -50,7 +50,7 @@ RUN set -x \
     && chmod +x /usr/bin/supercronic \
     && mkdir /etc/supercronic \
     && echo '*/1 * * * * php /app/artisan schedule:run' > /etc/supercronic/laravel \
-    # generate self-signed SSL key and certificate files
+    # generate self-signed SSL key and certificate Files
     && openssl req -x509 -nodes -days 1095 -newkey rsa:2048 \
         -subj "/C=CA/ST=QC/O=Company, Inc./CN=mydomain.com" \
         -addext "subjectAltName=DNS:mydomain.com" \
@@ -85,7 +85,7 @@ USER appuser:appuser
 # use directory with application sources by default
 WORKDIR /app
 
-# copy composer (json|lock) files for dependencies layer caching
+# copy composer (json|lock) Files for dependencies layer caching
 COPY --chown=appuser:appuser ./composer.* /app/
 
 # install composer dependencies (autoloader MUST be generated later!)

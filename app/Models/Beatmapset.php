@@ -9,6 +9,7 @@ class Beatmapset extends Model
 {
     use HasFactory;
     public $incrementing = false;
+    public $timestamps = false;
     protected $fillable = [
         'id',
         'artist',
@@ -31,6 +32,7 @@ class Beatmapset extends Model
         'storyboard',
         'submitted_date',
         'tags',
+        'last_updated',
     ];
 
     public function beatmaps(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
