@@ -4,13 +4,22 @@ namespace App\Services\Osu;
 
 use App\Base\Api\FileSaver;
 use App\Exceptions\OperationError;
-use App\Jobs\SaveCovers;
+use App\Jobs\SaveCover;
+use App\Jobs\SavePreview;
 use App\Models\Beatmapset;
+use App\Repository\BeatmapsetsRepository;
 use App\Services\Osu\Api\Beatmapsets;
 use Illuminate\Support\Carbon;
 
 class Parser
 {
+    protected $repo;
+
+    public function __construct()
+    {
+        $this->repo = new BeatmapsetsRepository();
+    }
+
     /**
      * @throws OperationError
      */
@@ -34,20 +43,13 @@ class Parser
 
     private function saveBeatmapset($data)
     {
-
-//        foreach ($data['covers'] as $cover_name => $url) {
-//            SaveCovers::dispatch($url, $cover_name, $data['id']);
-//        }
-
-        Beatmapset::create([
-//            'id'                => $data['id'],
+        $item = [
+            'id'                => $data['id'],
             'artist'            => $data['artist'],
             'artist_unicode'    => $data['artist_unicode'],
-            'cover'             => '123',
             'creator'           => $data['creator'],
             'nsfw'              => $data['nsfw'],
             'play_count'        => $data['play_count'],
-            'preview_url'       => $data['preview_url'],
             'source'            => $data['source'],
             'spotlight'         => $data['spotlight'],
             'status'            => $data['status'],
@@ -61,7 +63,15 @@ class Parser
             'storyboard'        => $data['storyboard'],
             'submitted_date'    => Carbon::parse($data['submitted_date']),
             'tags'              => $data['tags'],
-            'last_updated'        => Carbon::parse($data['last_updated'])
-        ]);
+            'last_updated'      => Carbon::parse($data['last_updated'])
+        ];
+
+        $this->repo->save($item);
+
+        SavePreview::dispatch($data['preview_url'], $data['id']);
+
+        foreach ($data['covers'] as $cover_name => $url) {
+            SaveCover::dispatch($url, $cover_name, $data['id']);
+        }
     }
 }

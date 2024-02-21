@@ -4,17 +4,17 @@ namespace App\Jobs;
 
 use App\Base\Api\FileSaver;
 use App\Exceptions\OperationError;
+use App\Repository\BeatmapsetsRepository;
 use App\Services\Api\ApiThrottle;
-use App\Services\Osu\Parser;
 use GuzzleHttp\Exception\GuzzleException;
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Log;
 
-class SaveCovers implements ShouldQueue
+class SaveCover implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
@@ -22,6 +22,7 @@ class SaveCovers implements ShouldQueue
     protected string $url;
     protected string $name;
     protected string $id;
+    protected $beatmapsetsRepo;
 
     /**
      * The number of times the job may be attempted.
@@ -43,6 +44,8 @@ class SaveCovers implements ShouldQueue
         $this->url = $url;
         $this->name = $name;
         $this->id = $id;
+
+        $this->beatmapsetsRepo = new BeatmapsetsRepository();
     }
 
     protected function prepare(): void
@@ -60,16 +63,25 @@ class SaveCovers implements ShouldQueue
         $this->prepare();
         $this->apiThrottle->addCount();
 
-        if ($this->apiThrottle->check()) {
-            $this->release($this->apiThrottle->getTimeOut());
-        }
-        else {
-
-            try {
-                $this->fileSaver->save($this->url, 'covers/'.$this->name, $this->name);
-            } catch (OperationError|GuzzleException $e) {
-
+        try {
+            if ($this->apiThrottle->check()) {
+                $this->release($this->apiThrottle->getTimeOut());
             }
+            else {
+                $this->fileSaver->save($this->url, $this->id, $this->name);
+            }
+        } catch (OperationError $ex) {
+            $this->disableCover();
+        }
+
+    }
+
+    protected function disableCover(): void
+    {
+        try {
+            $this->beatmapsetsRepo->disabledCover($this->id);
+        } catch (OperationError $ex) {
+            Log::error('Osu beatmapsets cover parser exception => '.$ex);
         }
     }
 }

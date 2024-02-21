@@ -21,7 +21,7 @@ class OsuParser
         // app('api.throttle.osu')->addCount(1); // <- чет типо этого должно получиться
 
 
-        for ($i = 1; $i < 40; $i++) {
+        for ($i = 1; $i < 200; $i++) {
             BeatmapParse::dispatch($i);
         }
     }

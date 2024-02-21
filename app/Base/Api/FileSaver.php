@@ -12,7 +12,7 @@ class FileSaver
 {
     protected FilesystemManager $filesystem_manager;
 
-    protected FileSystem $disk;
+    protected string $disk;
 
     protected Client $httpClient;
 
@@ -24,6 +24,7 @@ class FileSaver
         'audio/mpeg',
         'audio/ogg',
         'audio/mp4',
+        'audio/mp3'
     ];
 
     public function __construct(FilesystemManager $filesystem_manager, Client $client)
@@ -33,15 +34,19 @@ class FileSaver
     }
 
     /**
-     * @throws GuzzleException
      * @throws OperationError
      */
     public function save(string $url, string $path, string $name): void
     {
-        $date = $this->httpClient->get($url);
+        try {
+            $data = $this->httpClient->get($url);
 
-        $content = $date->getBody()->getContents();
-        $mime = $date->getHeader('content-type')[0];
+        } catch (GuzzleException $ex) {
+            throw new OperationError($ex->getMessage(), $ex->getCode());
+        }
+
+        $content = $data->getBody()->getContents();
+        $mime = $data->getHeader('content-type')[0];
 
         if (!in_array($mime, $this->mime)) {
             throw new OperationError('Illegal mime type');
@@ -50,14 +55,16 @@ class FileSaver
             throw new OperationError('Illegal disk');
         }
 
-        $extension = explode('/', $mime)[1];
+        $extension = explode('.', $url);
+        $extension = end($extension);
+        $extension = explode('?', $extension)[0];
         $path = $path.'/'.$name.'.'.$extension;
 
-        $this->filesystem_manager->put($path, $content);
+        $this->filesystem_manager->disk($this->disk)->put($path, $content);
     }
 
     public function setDisk(string $name): void
     {
-        $this->disk = $this->filesystem_manager->disk($name);
+        $this->disk = $name;
     }
 }
