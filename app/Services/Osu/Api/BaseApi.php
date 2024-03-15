@@ -2,6 +2,7 @@
 
 namespace App\Services\Osu\Api;
 
+use App\Exceptions\OperationError;
 use Illuminate\Support\Facades\Http;
 
 class BaseApi
@@ -23,10 +24,24 @@ class BaseApi
         $this->token = config('services.osu.token');
     }
 
-    public function callApi(string $method, array $params = null)
+    public function callApi(string $url, array $params = [])
     {
         return Http::withHeaders([
             'Authorization' => 'Bearer ' . $this->token
-        ])->get($this->base_url . $this->method . '/' . $method, $params);
+        ])->get($this->base_url . $this->method . '/' . $url, $params);
+    }
+
+    /**
+     * @throws OperationError
+     */
+    public function getItem(int $id)
+    {
+        $result = $this->callApi($id);
+
+        if ($result->status() === 404) {
+            throw new OperationError('item not found', 404);
+        }
+
+        return $result->json();
     }
 }

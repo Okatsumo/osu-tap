@@ -22,7 +22,7 @@ return new class extends Migration
             $table->string('is_preview')->default(true);
             $table->string('source');
             $table->boolean('spotlight');
-            $table->enum('status', ['ranked', 'qualified', 'disqualified', 'never_qualified', 'approved']);
+            $table->enum('status', ['ranked', 'qualified', 'disqualified', 'never_qualified', 'approved', 'loved', 'graveyard', 'pending', 'wip']);
             $table->string('title');
             $table->string('title_unicode');
             $table->integer('user_id');

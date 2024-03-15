@@ -2,13 +2,11 @@
 
 namespace App\Console\Commands;
 
-use App\Base\Api\FileSaver;
-use App\Exceptions\OperationError;
-use App\Repository\BeatmapsetsRepository;
+use App\Jobs\BeatmapsetParser;
 use App\Services\Osu\Api\Beatmapsets;
-use App\Services\Osu\Parser\OsuParser;
+use App\Services\Osu\Parser\BeatmapestsParser;
 use Illuminate\Console\Command;
-use Illuminate\Support\Carbon;
+use \App\Services\Osu\Parser\Parser as OsuParser;
 
 class parser extends Command
 {
@@ -18,7 +16,7 @@ class parser extends Command
      *
      * @var string
      */
-    protected $signature = 'parser:test';
+    protected $signature = 'parser:start';
 
     /**
      * The console command description.
@@ -29,11 +27,10 @@ class parser extends Command
 
     /**
      * Execute the console command.
-     * @throws OperationError
      */
     public function handle(): void
     {
         $parser = new OsuParser();
-        $parser->parseBeatmapsets();
+        $parser->start();
     }
 }

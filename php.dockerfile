@@ -79,6 +79,9 @@ RUN set -x \
 # copy php ini file
 RUN cp /usr/local/etc/php/php.ini-production /usr/local/etc/php/php.ini
 
+# change memory limit
+RUN sed -i 's/memory_limit = 128M/memory_limit = 256M/g' /usr/local/etc/php/php.ini
+
 # use an unprivileged user by default
 USER appuser:appuser
 

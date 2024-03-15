@@ -1,17 +1,15 @@
 <?php
 
-namespace App\Services\Osu;
+namespace App\Services\Osu\Parser;
 
-use App\Base\Api\FileSaver;
 use App\Exceptions\OperationError;
 use App\Jobs\SaveCover;
 use App\Jobs\SavePreview;
-use App\Models\Beatmapset;
 use App\Repository\BeatmapsetsRepository;
 use App\Services\Osu\Api\Beatmapsets;
 use Illuminate\Support\Carbon;
 
-class Parser
+class BeatmapestsParser
 {
     protected $repo;
 
@@ -23,11 +21,11 @@ class Parser
     /**
      * @throws OperationError
      */
-    public function parseBeatmapsets(int $page = 1)
+    public function parse(int $page = 1, string $sort = 'ranked_asc', $status = 'any')
     {
         $beatmapsets = new Beatmapsets();
 
-        $data = $beatmapsets->getBeatmapsets($page);
+        $data = $beatmapsets->getBeatmapsets($page, $sort, $status);
 
         if (array_key_exists('authentication', $data)) {
             throw new OperationError('Authentication exception', 401);
@@ -37,11 +35,17 @@ class Parser
         }
 
         foreach ($data['beatmapsets'] as $beatmapset) {
-            $this->saveBeatmapset($beatmapset);
+            $this->save($beatmapset);
+        }
+
+        SavePreview::dispatch($data['preview_url'], $data['id']);
+
+        foreach ($data['covers'] as $cover_name => $url) {
+            SaveCover::dispatch($url, $cover_name, $data['id']);
         }
     }
 
-    private function saveBeatmapset($data)
+    private function save($data)
     {
         $item = [
             'id'                => $data['id'],
@@ -67,11 +71,5 @@ class Parser
         ];
 
         $this->repo->save($item);
-
-        SavePreview::dispatch($data['preview_url'], $data['id']);
-
-        foreach ($data['covers'] as $cover_name => $url) {
-            SaveCover::dispatch($url, $cover_name, $data['id']);
-        }
     }
 }

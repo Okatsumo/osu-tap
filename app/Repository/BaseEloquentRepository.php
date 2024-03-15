@@ -27,12 +27,23 @@ class BaseEloquentRepository
      */
     public function get(int $id, array|string $columns = ['*'])
     {
-        $data = $this->model->find($id);
+        $data = $this->model->find($id, $columns);
 
         if (empty($data)) {
             throw new OperationError('beatmaps set not found', 404);
         }
 
         return $data;
+    }
+
+    public function getLastId(string $orderBy = 'id'): int
+    {
+        $beatmapset = $this
+            ->model
+            ->orderBy($orderBy, 'desc')
+            ->limit(1)
+            ->first();
+
+        return $beatmapset->id;
     }
 }

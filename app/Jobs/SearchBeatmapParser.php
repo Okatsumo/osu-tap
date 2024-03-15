@@ -4,18 +4,20 @@ namespace App\Jobs;
 
 use App\Exceptions\OperationError;
 use App\Services\Api\ApiThrottle;
-use App\Services\Osu\Parser;
+use App\Services\Osu\Api\Beatmapsets;
+use App\Services\Osu\Parser\BeatmapestsParser;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Log;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
 use Psr\SimpleCache\InvalidArgumentException;
 
-class BeatmapParse implements ShouldQueue
+class SearchBeatmapParser implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
@@ -27,6 +29,9 @@ class BeatmapParse implements ShouldQueue
      * @var int
      */
     public int $tries = 0;
+    public string $sort;
+    public string $status;
+    public $api;
 
     /**
      * Тротлинг api
@@ -36,9 +41,12 @@ class BeatmapParse implements ShouldQueue
     /**
      * Create a new job instance.
      */
-    public function __construct(int $page)
+    public function __construct(int $page, string $sort, string $status)
     {
         $this->page = $page;
+        $this->sort = $sort;
+        $this->status = $status;
+
     }
 
 
@@ -53,17 +61,22 @@ class BeatmapParse implements ShouldQueue
     public function handle(): void
     {
         $this->prepare();
+        $this->apiThrottle->addCount();
 
+        if ($this->apiThrottle->check()) {
+            $this->release($this->apiThrottle->getTimeOut());
+        } else {
+            $this->parse();
+        }
+    }
+
+
+    public function parse()
+    {
         try {
-            $this->apiThrottle->addCount();
+            $parser = new BeatmapestsParser();
 
-            if ($this->apiThrottle->check()) {
-                $this->release($this->apiThrottle->getTimeOut());
-            }
-            else {
-                $parser = new Parser();
-                $parser->parseBeatmapsets($this->page);
-            }
+            $parser->parse($this->page, $this->sort, $this->status);
 
         } catch (InvalidArgumentException|NotFoundExceptionInterface|ContainerExceptionInterface|OperationError $e) {
             $this->fail($e);
