@@ -6,6 +6,7 @@ networks:
 volumes:
     mysql-data: {}
     tmp-data: {}
+    redis-data: {}
 
 services:
   osutap: &app
@@ -16,8 +17,8 @@ services:
       environment:
           APP_DEBUG: 'true'
           APP_ENV: local
-          REDIS_HOST: redis
-          REDIS_PASSWORD: redis_password
+          REDIS_HOST: osu-tap-redis-1
+          REDIS_PASSWORD: forge
           DB_HOST: mysql
           DB_CONNECTION: mysql
           DB_DATABASE: osutap
@@ -30,12 +31,13 @@ services:
           - .:/app:rw
       depends_on:
           mysql: {condition: service_healthy}
+          redis: {condition: service_healthy}
       networks:
           - osu_tap_network
 
   queue:
       <<: *app
-      command: php /app/artisan queue:work --memory=256 --sleep=1
+      command: php /app/artisan queue:work --memory=512 --sleep=1
 
   cron:
       <<: *app
@@ -75,12 +77,27 @@ services:
       MYSQL_PASSWORD: ${MYSQL_PASSWORD:-forge}
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-forge}
     healthcheck: # Healthcheck docs: <https://docs.docker.com/engine/reference/builder/#healthcheck>
-        test: [ "CMD", 'mysqladmin', 'ping', '-u', 'root', '-p$$MYSQL_ROOT_PASSWORD' ]
+        test: [ "CMD", 'mysqladmin', 'ping', '-u', 'osutap', '-p$$MYSQL_PASSWORD' ]
         interval: 15s
         timeout: 15s
         start_period: 10s
     networks:
       - osu_tap_network
+
+  redis:
+      image: redis:7.2.4 #image page: <https://hub.docker.com/_/redis/
+      restart: unless-stopped
+      volumes:
+          - redis-data:/root/redis
+      ports:
+          - "6379:6379"
+      environment:
+          REDIS_PASSWORD: ${REDIS_PASSWORD:-forge}
+          REDIS_PORT: 6379
+      healthcheck: # Healthcheck docs: <https://docs.docker.com/engine/reference/builder/#healthcheck>
+          test: [ "CMD", "redis-cli", "--raw", "incr", "ping" ]
+      networks:
+          - osu_tap_network
 
   npm:
       image: node:20.10.0 #image page: <https://hub.docker.com/_/node>

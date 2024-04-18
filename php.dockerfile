@@ -39,7 +39,6 @@ RUN set -x \
         gd \
         pdo_mysql \
         sockets \
-        opcache \
         pcntl \
         intl \
         1>/dev/null \
@@ -51,7 +50,7 @@ RUN set -x \
     && chmod +x /usr/bin/supercronic \
     && mkdir /etc/supercronic \
     && echo '*/1 * * * * php /app/artisan schedule:run' > /etc/supercronic/laravel \
-    # generate self-signed SSL key and certificate files
+    # generate self-signed SSL key and certificate Files
     && openssl req -x509 -nodes -days 1095 -newkey rsa:2048 \
         -subj "/C=CA/ST=QC/O=Company, Inc./CN=mydomain.com" \
         -addext "subjectAltName=DNS:mydomain.com" \
@@ -62,9 +61,6 @@ RUN set -x \
     && docker-php-source delete \
     && apk del .build-deps \
     && rm -R /tmp/pear \
-    # enable opcache for CLI and JIT, docs: <https://www.php.net/manual/en/opcache.configuration.php#ini.opcache.jit>
-    && echo -e "\nopcache.enable=1\nopcache.enable_cli=1\nopcache.jit_buffer_size=32M\nopcache.jit=1235\n" >> \
-        ${PHP_INI_DIR}/conf.d/docker-php-ext-opcache.ini \
     # show installed PHP modules
     && php -m \
     # create unprivileged user
@@ -80,13 +76,19 @@ RUN set -x \
     && mkdir /app \
     && chown -R appuser:appuser /app
 
+# copy php ini file
+RUN cp /usr/local/etc/php/php.ini-production /usr/local/etc/php/php.ini
+
+# change memory limit
+RUN sed -i 's/memory_limit = 128M/memory_limit = 256M/g' /usr/local/etc/php/php.ini
+
 # use an unprivileged user by default
 USER appuser:appuser
 
 # use directory with application sources by default
 WORKDIR /app
 
-# copy composer (json|lock) files for dependencies layer caching
+# copy composer (json|lock) Files for dependencies layer caching
 COPY --chown=appuser:appuser ./composer.* /app/
 
 # install composer dependencies (autoloader MUST be generated later!)

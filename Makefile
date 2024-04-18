@@ -42,3 +42,9 @@ clean: ## Make clean
 	rm -rf node_modules
 	rm -rf public/build
 	docker-compose down -v # Stops containers and remove named volumes declared in the `volumes` secti
+
+dev: ## npm run dev
+	APP_UID=$(shell id -u) APP_GID=$(shell id -g) docker-compose run npm run dev
+
+build: ## build prod frontend
+	APP_UID=$(shell id -u) APP_GID=$(shell id -g) docker-compose run npm run build

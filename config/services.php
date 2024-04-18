@@ -31,4 +31,14 @@ return [
         'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
     ],
 
+    'osu' => [
+        'base_url'          => 'https://osu.ppy.sh/api/v2/',
+        'auth_url'          => env('OSU_AUTH_URL', 'https://osu.ppy.sh/oauth/authorize'),
+        'access_token_url'  => env('OSU_AUTH_ACCESS_TOKEN_URL', 'https://osu.ppy.sh/oauth/token'),
+        'scopes'            => env('OSU_SCOPES', 'public'),
+        'throttle_settings' => [
+            'attempt_count' => 199,
+            'time_out' => 60,
+        ]
+    ]
 ];

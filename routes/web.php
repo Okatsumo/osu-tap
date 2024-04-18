@@ -13,7 +13,10 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::view('/', 'welcome');
+Route::view('/', 'home')->name('home');
+Route::view('/scores', 'scores')->name('scores');
+Route::get('/maps', [\App\Http\Controllers\BeatmapsController::class, 'beatmaps'])->name('maps');
+Route::view('/users', 'users')->name('users');
 
 Route::view('dashboard', 'dashboard')
     ->middleware(['auth', 'verified', 'isAdmin'])
