@@ -29,7 +29,8 @@ class BeatmapsetsRepository extends BaseEloquentRepository
      */
     public function disabledCover(int $id): void
     {
-        $beatmapsets = $this->get($id, 'is_cover');
+        $beatmapsets = $this->get($id);
+
 
         $beatmapsets->is_cover = false;
         $beatmapsets->update();
@@ -40,7 +41,7 @@ class BeatmapsetsRepository extends BaseEloquentRepository
      */
     public function disablePreview(int $id)
     {
-        $beatmapsets = $this->get($id, 'is_preview');
+        $beatmapsets = $this->get($id);
 
         $beatmapsets->is_preview = false;
         $beatmapsets->update();

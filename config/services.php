@@ -34,12 +34,10 @@ return [
     'osu' => [
         'base_url'          => 'https://osu.ppy.sh/api/v2/',
         'auth_url'          => env('OSU_AUTH_URL', 'https://osu.ppy.sh/oauth/authorize'),
-        'client_id'         => env('OSU_CLIENT_ID', ''),
-        'client_secret'     => env('OSU_CLIENT_SECRET', ''),
+        'access_token_url'  => env('OSU_AUTH_ACCESS_TOKEN_URL', 'https://osu.ppy.sh/oauth/token'),
         'scopes'            => env('OSU_SCOPES', 'public'),
-        'token'             => env('OSU_TOKEN'),
         'throttle_settings' => [
-            'attempt_count' => 180,
+            'attempt_count' => 199,
             'time_out' => 60,
         ]
     ]

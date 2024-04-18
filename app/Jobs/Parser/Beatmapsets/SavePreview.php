@@ -1,11 +1,13 @@
 <?php
 
-namespace App\Jobs;
+namespace App\Jobs\Parser\Beatmapsets;
 
 use App\Base\Api\FileSaver;
+use App\Base\Enums\HttpRequestMethods;
 use App\Exceptions\OperationError;
 use App\Repository\BeatmapsetsRepository;
 use App\Services\Api\ApiThrottle;
+use App\Services\Api\BaseRequest;
 use GuzzleHttp\Exception\GuzzleException;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -14,15 +16,14 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Log;
 
-class SaveCover implements ShouldQueue
+class SavePreview extends BaseOsuParser
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     private FileSaver $fileSaver;
     protected string $url;
-    protected string $name;
     protected string $id;
-    protected $beatmapsetsRepo;
+    protected string $request_class = BaseRequest::class;
 
     /**
      * The number of times the job may be attempted.
@@ -39,47 +40,50 @@ class SaveCover implements ShouldQueue
     /**
      * Create a new job instance.
      */
-    public function __construct(string $url, string $name, string $id)
+    public function __construct(string $url, string $id)
     {
         $this->url = $url;
-        $this->name = $name;
         $this->id = $id;
-
-        $this->beatmapsetsRepo = new BeatmapsetsRepository();
-    }
-
-    protected function prepare(): void
-    {
-        $this->apiThrottle = new ApiThrottle('osu', config('services.osu.throttle_settings'));
-        $this->fileSaver = app(FileSaver::class);
-        $this->fileSaver->setDisk('beatmapsets');
     }
 
     /**
      * Execute the job.
      */
-    public function handle(): void
+    public function parse(): void
     {
-        $this->prepare();
-        $this->apiThrottle->addCount();
-
         try {
-            if ($this->apiThrottle->check()) {
-                $this->release($this->apiThrottle->getTimeOut());
-            }
-            else {
-                $this->fileSaver->save($this->url, $this->id, $this->name);
-            }
-        } catch (OperationError $ex) {
-            $this->disableCover();
-        }
+            $file = $this->getCover();
+            $file->name = 'preview';
 
+            if ($file->type->name == 'mpeg') {
+                $file->fullName = 'preview.mp3';
+            } else {
+                $file->fullName = 'preview.'.$file->type->name;
+            }
+
+
+            $fileSaver = app(FileSaver::class);
+            $fileSaver->setDisk('beatmapsets');
+            $fileSaver->save($file, (string) $this->id);
+
+
+        } catch (OperationError) {
+            $this->disablePreview();
+        }
     }
 
-    protected function disableCover(): void
+    /**
+     * @throws OperationError
+     */
+    protected function getCover()
+    {
+        return $this->request->getFile($this->url);
+    }
+
+    protected function disablePreview(): void
     {
         try {
-            $this->beatmapsetsRepo->disabledCover($this->id);
+            $this->beatmapsetsRepo->disablePreview($this->id);
         } catch (OperationError $ex) {
             Log::error('Osu beatmapsets cover parser exception => '.$ex);
         }

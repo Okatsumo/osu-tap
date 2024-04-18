@@ -17,9 +17,21 @@ class BaseEloquentRepository
         $this->model = app($model);
     }
 
-    public function save(array $data = [])
+    /**
+     * @throws OperationError
+     */
+    public function save(array $data = []): void
     {
-        $this->model->create($data);
+        try {
+            $this->model->create($data);
+        } catch (\PDOException $ex) {
+
+            if ($ex->getCode() == 23000)  {
+                throw new OperationError('Record already exists', 23000);
+            }
+
+            throw new OperationError($ex->getMessage(), $ex->getCode());
+        }
     }
 
     /**
@@ -30,7 +42,7 @@ class BaseEloquentRepository
         $data = $this->model->find($id, $columns);
 
         if (empty($data)) {
-            throw new OperationError('beatmaps set not found', 404);
+            throw new OperationError('item not found', 404);
         }
 
         return $data;
@@ -38,12 +50,20 @@ class BaseEloquentRepository
 
     public function getLastId(string $orderBy = 'id'): int
     {
-        $beatmapset = $this
+        $data = $this
             ->model
             ->orderBy($orderBy, 'desc')
             ->limit(1)
             ->first();
 
-        return $beatmapset->id;
+        return $data->id;
+    }
+
+    public function update(int $id, array $attributes, array $options = [])
+    {
+        $this
+            ->model
+            ->find($id)
+            ->update($attributes, $options);
     }
 }

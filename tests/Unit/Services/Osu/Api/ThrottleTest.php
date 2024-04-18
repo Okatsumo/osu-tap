@@ -1,18 +1,18 @@
 <?php
 
-namespace Tests\Unit\Services\Api;
+namespace Tests\Unit\Services\Osu\Api;
 
+use App\Services\Osu\Api\Throttle;
 use Illuminate\Contracts\Cache\Store;
 use Mockery;
 use PHPUnit\Framework\TestCase;
-use App\Services\Api\ApiThrottle;
 
-class ApiThrottleTest extends TestCase
+class ThrottleTest extends TestCase
 {
-    protected ApiThrottle $apiThrottle;
+    protected Throttle $throttle;
     protected array $throttle_settings;
-    protected string $apiName;
     protected string $key;
+    protected int $accountId;
 
     protected $cacheMock;
 
@@ -27,33 +27,45 @@ class ApiThrottleTest extends TestCase
     {
         parent::setUp();
 
-        $this->apiName = 'test_api';
-        $this->key = 'ApiThrottle:' . $this->apiName;
+        $this->cacheMock = Mockery::mock(Store::class);
+        app()->bind('cache.store', fn() => $this->cacheMock);
+
+        $this->accountId = 1;
         $this->throttle_settings = [
             'attempt_count' => 2,
             'time_out' => 60,
         ];
-
-        $this->cacheMock = Mockery::mock(Store::class);
-        app()->bind('cache.store', fn() => $this->cacheMock);
-
-        $this->apiThrottle = new ApiThrottle($this->apiName, $this->throttle_settings);
+        $this->key = 'ApiThrottle:Osu:' . $this->accountId;
+        $this->throttle = new Throttle($this->throttle_settings);
+        $this->throttle->setAccountId($this->accountId);
     }
 
     public function testCheckIsNotCacheKey(): void
     {
+        $this->cacheMock
+            ->shouldReceive('tags')
+            ->withArgs(['osu'])
+            ->once()
+            ->andReturn($this->cacheMock);
+
         $this->cacheMock
             ->shouldReceive('has')
             ->withArgs([$this->key])
             ->once()
             ->andReturn(false);
 
-        $status = $this->apiThrottle->check();
+        $status = $this->throttle->check();
         $this->assertFalse($status);
     }
 
     public function testCheckIsFailTimeOut(): void
     {
+        $this->cacheMock
+            ->shouldReceive('tags')
+            ->withArgs(['osu'])
+            ->twice()
+            ->andReturn($this->cacheMock);
+
         $this->cacheMock
             ->shouldReceive('has')
             ->withArgs([$this->key])
@@ -66,12 +78,18 @@ class ApiThrottleTest extends TestCase
             ->once()
             ->andReturn('33');
 
-        $status = $this->apiThrottle->check();
+        $status = $this->throttle->check();
         $this->assertTrue($status);
     }
 
     public function testCheckIsNotAttemptCount()
     {
+        $this->cacheMock
+            ->shouldReceive('tags')
+            ->withArgs(['osu'])
+            ->times(3)
+            ->andReturn($this->cacheMock);
+
         $this->cacheMock
             ->shouldReceive('has')
             ->withArgs([$this->key])
@@ -91,12 +109,18 @@ class ApiThrottleTest extends TestCase
             ->andReturn('1');
 
 
-        $status = $this->apiThrottle->check();
+        $status = $this->throttle->check();
         $this->assertFalse($status);
     }
 
     public function testCheckIsNotThrottle()
     {
+        $this->cacheMock
+            ->shouldReceive('tags')
+            ->withArgs(['osu'])
+            ->times(4)
+            ->andReturn($this->cacheMock);
+
         $this->cacheMock
             ->shouldReceive('has')
             ->withArgs([$this->key])
@@ -121,12 +145,18 @@ class ApiThrottleTest extends TestCase
             ->once()
             ->andReturn('20');
 
-        $status = $this->apiThrottle->check();
+        $status = $this->throttle->check();
         $this->assertFalse($status);
     }
 
     public function testCheckIsThrottle()
     {
+        $this->cacheMock
+            ->shouldReceive('tags')
+            ->withArgs(['osu'])
+            ->times(4)
+            ->andReturn($this->cacheMock);
+
         $this->cacheMock
             ->shouldReceive('has')
             ->withArgs([$this->key])
@@ -151,13 +181,19 @@ class ApiThrottleTest extends TestCase
             ->once()
             ->andReturn('10000000000000000');
 
-        $status = $this->apiThrottle->check();
+        $status = $this->throttle->check();
         $this->assertTrue($status);
     }
 
 
     public function testAndCountIncrement()
     {
+        $this->cacheMock
+            ->shouldReceive('tags')
+            ->withArgs(['osu'])
+            ->times(2)
+            ->andReturn($this->cacheMock);
+
         $this->cacheMock
             ->shouldReceive('has')
             ->withArgs([$this->key])
@@ -169,7 +205,7 @@ class ApiThrottleTest extends TestCase
             ->withArgs([$this->key])
             ->once();
 
-        $this->apiThrottle->addCount();
+        $this->throttle->addCount();
 
         // заглушка, т.к. без нее PHPUnit просто выдаст предупреждение о том, что в данном тесте нет никаких проверок, но это не так
         $this->assertTrue(True);
@@ -177,6 +213,12 @@ class ApiThrottleTest extends TestCase
 
     public function testAndCountIncrementPut()
     {
+        $this->cacheMock
+            ->shouldReceive('tags')
+            ->withArgs(['osu'])
+            ->times(3)
+            ->andReturn($this->cacheMock);
+
         $this->cacheMock
             ->shouldReceive('has')
             ->withArgs([$this->key])
@@ -193,7 +235,7 @@ class ApiThrottleTest extends TestCase
             ->withArgs([$this->key.':TimeOut', time(), $this->throttle_settings['time_out']])
             ->once();
 
-        $this->apiThrottle->addCount();
+        $this->throttle->addCount();
 
         $this->assertTrue(True);
     }
@@ -201,12 +243,18 @@ class ApiThrottleTest extends TestCase
     public function testGetTimeOutIsZero()
     {
         $this->cacheMock
+            ->shouldReceive('tags')
+            ->withArgs(['osu'])
+            ->times(1)
+            ->andReturn($this->cacheMock);
+
+        $this->cacheMock
             ->shouldReceive('has')
             ->withArgs([$this->key])
             ->once()
             ->andReturn(null);
 
-        $timeOut = $this->apiThrottle->getTimeOut();
+        $timeOut = $this->throttle->getTimeOut();
         $this->assertEquals(0, $timeOut);
     }
 
@@ -214,6 +262,12 @@ class ApiThrottleTest extends TestCase
     {
         $failCount = 1;
         $time = 33;
+
+        $this->cacheMock
+            ->shouldReceive('tags')
+            ->withArgs(['osu'])
+            ->times(3)
+            ->andReturn($this->cacheMock);
 
         $this->cacheMock
             ->shouldReceive('has')
@@ -233,7 +287,7 @@ class ApiThrottleTest extends TestCase
             ->once()
             ->andReturn($time);
 
-        $timeOut = $this->apiThrottle->getTimeOut();
+        $timeOut = $this->throttle->getTimeOut();
         $condition = $time + $this->throttle_settings['time_out'] - time();
 
         $this->assertEquals($condition, $timeOut);
@@ -243,6 +297,12 @@ class ApiThrottleTest extends TestCase
     {
         $failCount = 3;
         $failTimeOut = 90;
+
+        $this->cacheMock
+            ->shouldReceive('tags')
+            ->withArgs(['osu'])
+            ->times(4)
+            ->andReturn($this->cacheMock);
 
         $this->cacheMock
             ->shouldReceive('has')
@@ -272,7 +332,7 @@ class ApiThrottleTest extends TestCase
         $multiplier = ceil($failCount / $this->throttle_settings['attempt_count']);
         $assert = $failTimeOut + ($multiplier * $this->throttle_settings['time_out'])  - time();
 
-        $result = $this->apiThrottle->getTimeOut();
+        $result = $this->throttle->getTimeOut();
 
         $this->assertEquals($assert, $result);
     }

@@ -1,21 +1,12 @@
 <?php
 
-namespace App\Jobs;
+namespace App\Jobs\Parser\Beatmapsets;
 
-use App\Exceptions\OperationError;
-use App\Repository\BeatmapsetsRepository;
-use App\Services\Api\ApiThrottle;
-use App\Services\Osu\Api\Beatmapsets;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-use Illuminate\Support\Carbon;
-use Illuminate\Support\Facades\Log;
-use Psr\Container\ContainerExceptionInterface;
-use Psr\Container\NotFoundExceptionInterface;
-use Psr\SimpleCache\InvalidArgumentException;
 
 class BeatmapsetsParser implements ShouldQueue
 {

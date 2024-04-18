@@ -2,46 +2,41 @@
 
 namespace App\Services\Osu\Api;
 
+use App\Base\Enums\HttpRequestMethods;
 use App\Exceptions\OperationError;
-use Illuminate\Support\Facades\Http;
+use App\Services\Api\BaseRequest;
+use GuzzleHttp\Exception\GuzzleException;
+use Psr\Http\Message\ResponseInterface;
 
-class BaseApi
+class BaseApi extends BaseRequest
 {
-    public $base_url;
-    public $auth_url;
-    public $client_id;
-    public $client_secret;
-    public $token;
-    public $method = '';
-
+    protected string $method = '';
+    protected string $base_url;
 
     public function __construct()
     {
         $this->base_url = config('services.osu.base_url');
-        $this->auth_url = config('services.osu.aut_url');
-        $this->client_id = config('services.osu.client_id');
-        $this->client_secret = config('services.osu.client_secret');
-        $this->token = config('services.osu.token');
-    }
-
-    public function callApi(string $url, array $params = [])
-    {
-        return Http::withHeaders([
-            'Authorization' => 'Bearer ' . $this->token
-        ])->get($this->base_url . $this->method . '/' . $url, $params);
     }
 
     /**
      * @throws OperationError
      */
-    public function getItem(int $id)
+    protected function callApi(HttpRequestMethods $method, string $url, array $params = []): ResponseInterface
     {
-        $result = $this->callApi($id);
+        $path = $this->base_url . $this->method . '/' . $url;
 
-        if ($result->status() === 404) {
-            throw new OperationError('item not found', 404);
-        }
+        return $this->call($method, $path, $params);
+    }
 
-        return $result->json();
+    /**
+     * @param int $id
+     * @return mixed
+     * @throws OperationError
+     */
+    public function getItem(int $id): mixed
+    {
+        $result = $this->callApi(HttpRequestMethods::GET, $id);
+
+        return json_decode($result->getBody());
     }
 }

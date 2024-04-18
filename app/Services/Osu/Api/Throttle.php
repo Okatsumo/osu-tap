@@ -1,30 +1,25 @@
 <?php
 
-namespace App\Services\Api;
+namespace App\Services\Osu\Api;
 
-use \App\Contracts\Services\Api\ApiThrottle as ApiThrottleContract;
+use App\Contracts\Services\Api\ApiThrottle;
 use Illuminate\Contracts\Cache\Store;
-use Psr\Container\ContainerExceptionInterface;
-use Psr\Container\NotFoundExceptionInterface;
-use Psr\SimpleCache\InvalidArgumentException;
 
-class ApiThrottle implements ApiThrottleContract
+class Throttle implements ApiThrottle
 {
-    protected string $api_name;
-
     /**
      * Настройки тротлинга.
      */
     protected array $throttle_settings;
+    protected int $account_id;
 
     /**
      * Кеш.
      */
     protected \Illuminate\Contracts\Cache\Repository|Store $cache;
 
-    public function __construct(string $api_name, array $throttle_settings)
+    public function __construct(array $throttle_settings)
     {
-        $this->api_name = $api_name;
         $this->throttle_settings = $throttle_settings;
         $this->cache = app('cache.store');
     }
@@ -33,31 +28,28 @@ class ApiThrottle implements ApiThrottleContract
      * Проверка разрешения на обращение к api.
      * Если true, то тротлинг активен, в ином случае будет возвращено false
      * @return bool
-     * @throws ContainerExceptionInterface
-     * @throws InvalidArgumentException
-     * @throws NotFoundExceptionInterface
      */
     public function check(): bool
     {
         $key = $this->getKey();
 
-        if ($this->cache->has($key)) {
+        if ($this->cache->tags('osu')->has($key)) {
 
-            if ($this->cache->get($key.':FailTimeOut')) {
+            if ($this->cache->tags('osu')->get($key.':FailTimeOut')) {
                 return true;
             }
 
             /**
              * Количество отправленных запросов к api не привышает заданное количество.
              */
-            if ($this->cache->get($key) < $this->throttle_settings['attempt_count']) {
+            if ($this->cache->tags('osu')->get($key) < $this->throttle_settings['attempt_count']) {
                 return false;
             } else {
 
                 /**
                  * Время блокировки подошло к концу.
                  */
-                if ($this->cache->get($key.':TimeOut') + $this->throttle_settings['time_out'] < time()) {
+                if ($this->cache->tags('osu')->get($key.':TimeOut') + $this->throttle_settings['time_out'] < time()) {
                     return false;
                 } else {
                     return true;
@@ -70,33 +62,25 @@ class ApiThrottle implements ApiThrottleContract
         return false;
     }
 
-    /**
-     * @throws InvalidArgumentException
-     */
     public function addCount(): void
     {
         $key = $this->getKey();
 
-        if ($this->cache->has($key)) {
+        if ($this->cache->tags('osu')->has($key)) {
 
-            $this->cache->increment($key);
+            $this->cache->tags('osu')->increment($key);
 
         } else {
-            $this->cache->put($key, 1, $this->throttle_settings['time_out']);
-            $this->cache->put($key.':TimeOut', time(), $this->throttle_settings['time_out']);
+            $this->cache->tags('osu')->put($key, 1, $this->throttle_settings['time_out']);
+            $this->cache->tags('osu')->put($key.':TimeOut', time(), $this->throttle_settings['time_out']);
         }
     }
 
-    /**
-     * @throws NotFoundExceptionInterface
-     * @throws ContainerExceptionInterface
-     * @throws InvalidArgumentException
-     */
     public function getTimeOut(): int
     {
         $key = $this->getKey();
 
-        if ($this->cache->has($key)) {
+        if ($this->cache->tags('osu')->has($key)) {
             $count = $this->getCount();
             $attemptCount = $this->throttle_settings['attempt_count'];
 
@@ -106,18 +90,18 @@ class ApiThrottle implements ApiThrottleContract
             if ($count > $attemptCount) {
                 $failTimeOutKey = $key.':FailTimeOut';
 
-                if ($this->cache->has($failTimeOutKey)) {
+                if ($this->cache->tags('osu')->has($failTimeOutKey)) {
                     /**
                      * Увеличение времени блокировки для последующих задач
                      */
                     $multiplier = ceil($count / $attemptCount);
-                    $timeOut = $this->cache->get($failTimeOutKey) + ($multiplier * $this->throttle_settings['time_out']) - time();
+                    $timeOut = $this->cache->tags('osu')->get($failTimeOutKey) + ($multiplier * $this->throttle_settings['time_out']) - time();
                 } else {
                     /**
                      * Первое нарушение, устанавливаем время блокировки
                      */
-                    $timeOut = $this->cache->get($key.':TimeOut') + $this->throttle_settings['time_out'] - time();
-                    $this->cache->put($failTimeOutKey, time() + $timeOut, $timeOut);
+                    $timeOut = $this->cache->tags('osu')->get($key.':TimeOut') + $this->throttle_settings['time_out'] - time();
+                    $this->cache->tags('osu')->put($failTimeOutKey, time() + $timeOut, $timeOut);
                 }
 
                 return $timeOut;
@@ -126,22 +110,17 @@ class ApiThrottle implements ApiThrottleContract
             /**
              * Если троттлинг не активен, возвращаем время до окончания текущего TimeOut
              */
-            return $this->cache->get($key.':TimeOut') + $this->throttle_settings['time_out'] - time();
+            return $this->cache->tags('osu')->get($key.':TimeOut') + $this->throttle_settings['time_out'] - time();
         }
 
         return 0;
     }
 
-    /**
-     * @throws ContainerExceptionInterface
-     * @throws NotFoundExceptionInterface
-     * @throws InvalidArgumentException
-     */
     protected function getCount(): int
     {
         $key = $this->getKey();
 
-        return $this->cache->get($key);
+        return $this->cache->tags('osu')->get($key);
     }
 
     /**
@@ -149,6 +128,11 @@ class ApiThrottle implements ApiThrottleContract
      */
     protected function getKey(): string
     {
-        return 'ApiThrottle:'.$this->api_name;
+        return 'ApiThrottle:Osu:'.$this->account_id;
+    }
+
+    public function setAccountId(int $id): void
+    {
+        $this->account_id = $id;
     }
 }

@@ -2,16 +2,15 @@
 
 namespace App\Contracts\Base\Api;
 
-use App\Exceptions\OperationError;
-use GuzzleHttp\Exception\GuzzleException;
+use App\Base\Dto\File;
 
 interface FileSaver
 {
     /**
-     * @throws GuzzleException
-     * @throws OperationError
+     * @param File $file
+     * @param string $path
      */
-    public function save(string $url, string $path, string $name): void;
+    public function save(File $file, string $path): void;
 
     public function setDisk(string $name): void;
 }

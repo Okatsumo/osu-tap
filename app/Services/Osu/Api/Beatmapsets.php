@@ -2,17 +2,14 @@
 
 namespace App\Services\Osu\Api;
 
-use App\Exceptions\Handler as ExceptionsHandler;
-use App\Exceptions\OperationError;
+use App\Base\Enums\HttpRequestMethods;
+use GuzzleHttp\Exception\GuzzleException;
 
 class Beatmapsets extends BaseApi
 {
-    public $method = 'beatmapsets';
+    protected string $method = 'beatmapsets';
 
-    /**
-     * @throws OperationError
-     */
-    public function getBeatmapsets(int $page, string $sort, string $status)
+    public function getBeatmapsets(int $page, string $sort, string $status): mixed
     {
         $params = [
             'page'  => $page ?: 1,
@@ -21,14 +18,6 @@ class Beatmapsets extends BaseApi
             'limit' => 50
         ];
 
-        return $this->callApi('search', $params)->json();
-    }
-
-    public function getTotalPages(string $sort = 'ranked_asc', int $itemsLimit = 50): int
-    {
-        $data = $this->getBeatmapsets();
-        $pages = $data['total'] / $itemsLimit;
-
-        return round($pages);
+        return json_decode($this->callApi(HttpRequestMethods::GET, 'search', $params)->getBody());
     }
 }

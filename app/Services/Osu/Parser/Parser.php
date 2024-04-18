@@ -2,15 +2,15 @@
 
 namespace App\Services\Osu\Parser;
 
-use App\Jobs\BeatmapsetsParser;
-use App\Jobs\SearchBeatmapParser;
+use App\Jobs\Parser\Beatmapsets\BeatmapsetsPageParser;
+use App\Jobs\Parser\Beatmapsets\BeatmapsetsStartParser;
 use App\Repository\BeatmapsetsRepository;
 use App\Services\Osu\Api\Beatmapsets;
 
-class Parser
+final class Parser
 {
-    private $api;
-    private $repo;
+    protected Beatmapsets $api;
+    protected BeatmapsetsRepository $repo;
 
     public function __construct()
     {
@@ -18,39 +18,18 @@ class Parser
         $this->repo = new BeatmapsetsRepository();
     }
 
-    public function start()
+    public function start(): void
     {
-        $this->searchParser('ranked_asc', 'any');
-        $this->searchParser('ranked_dec', 'any');
+        $this->searchParser('id_asc');
+        $this->searchParser('id_dec');
 
-        $ascItems = $this->api->getBeatmapsets(200, 'ranked_asc', 'any')['beatmapsets'];
-        $decItems = $this->api->getBeatmapsets(1, 'ranked_dec', 'any')['beatmapsets'];
-
-        $startId = end($ascItems)['id'] + 1;
-        $endId = end($decItems)['id'];
-
-        $this->parser($startId, $endId);
+        BeatmapsetsStartParser::dispatch();
     }
 
-    private function parser(int $startId, int $endId)
-    {
-        $chunkSize = 500;
-
-        $startChunk = $startId;
-        $endChunk = $startChunk + 500;
-
-        while ($startChunk <= $endChunk) {
-            BeatmapsetsParser::dispatch($startChunk, $endChunk);
-
-            $startChunk += $chunkSize;
-            $endChunk = min($endChunk + $chunkSize, $endId);
-        }
-    }
-
-    private function searchParser(string $sort, string $status): void
+    private function searchParser(string $sort): void
     {
         for ($page = 1; $page <= 200; $page++) {
-            SearchBeatmapParser::dispatch($page, $sort, $status);
+            BeatmapsetsPageParser::dispatch($page, $sort, 'any');
         }
     }
 }
