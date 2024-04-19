@@ -39,6 +39,6 @@ return [
         'throttle_settings' => [
             'attempt_count' => 199,
             'time_out' => 60,
-        ]
-    ]
+        ],
+    ],
 ];

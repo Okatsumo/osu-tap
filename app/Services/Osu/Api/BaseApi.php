@@ -5,7 +5,6 @@ namespace App\Services\Osu\Api;
 use App\Base\Enums\HttpRequestMethods;
 use App\Exceptions\OperationError;
 use App\Services\Api\BaseRequest;
-use GuzzleHttp\Exception\GuzzleException;
 use Psr\Http\Message\ResponseInterface;
 
 class BaseApi extends BaseRequest
@@ -23,7 +22,7 @@ class BaseApi extends BaseRequest
      */
     protected function callApi(HttpRequestMethods $method, string $url, array $params = []): ResponseInterface
     {
-        $path = $this->base_url . $this->method . '/' . $url;
+        $path = $this->base_url.$this->method.'/'.$url;
 
         return $this->call($method, $path, $params);
     }

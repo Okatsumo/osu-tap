@@ -28,14 +28,14 @@ class ThrottleTest extends TestCase
         parent::setUp();
 
         $this->cacheMock = Mockery::mock(Store::class);
-        app()->bind('cache.store', fn() => $this->cacheMock);
+        app()->bind('cache.store', fn () => $this->cacheMock);
 
         $this->accountId = 1;
         $this->throttle_settings = [
             'attempt_count' => 2,
             'time_out' => 60,
         ];
-        $this->key = 'ApiThrottle:Osu:' . $this->accountId;
+        $this->key = 'ApiThrottle:Osu:'.$this->accountId;
         $this->throttle = new Throttle($this->throttle_settings);
         $this->throttle->setAccountId($this->accountId);
     }
@@ -107,7 +107,6 @@ class ThrottleTest extends TestCase
             ->withArgs([$this->key])
             ->once()
             ->andReturn('1');
-
 
         $status = $this->throttle->check();
         $this->assertFalse($status);
@@ -185,7 +184,6 @@ class ThrottleTest extends TestCase
         $this->assertTrue($status);
     }
 
-
     public function testAndCountIncrement()
     {
         $this->cacheMock
@@ -208,7 +206,7 @@ class ThrottleTest extends TestCase
         $this->throttle->addCount();
 
         // заглушка, т.к. без нее PHPUnit просто выдаст предупреждение о том, что в данном тесте нет никаких проверок, но это не так
-        $this->assertTrue(True);
+        $this->assertTrue(true);
     }
 
     public function testAndCountIncrementPut()
@@ -237,7 +235,7 @@ class ThrottleTest extends TestCase
 
         $this->throttle->addCount();
 
-        $this->assertTrue(True);
+        $this->assertTrue(true);
     }
 
     public function testGetTimeOutIsZero()
@@ -328,9 +326,8 @@ class ThrottleTest extends TestCase
             ->once()
             ->andReturn($failTimeOut);
 
-
         $multiplier = ceil($failCount / $this->throttle_settings['attempt_count']);
-        $assert = $failTimeOut + ($multiplier * $this->throttle_settings['time_out'])  - time();
+        $assert = $failTimeOut + ($multiplier * $this->throttle_settings['time_out']) - time();
 
         $result = $this->throttle->getTimeOut();
 

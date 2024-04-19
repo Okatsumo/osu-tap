@@ -12,5 +12,5 @@ final class File
         public int $size,
         public FileType $type,
         public string $contents,
-    ){}
+    ) {}
 }

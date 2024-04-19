@@ -31,7 +31,6 @@ class BeatmapsetsRepository extends BaseEloquentRepository
     {
         $beatmapsets = $this->get($id);
 
-
         $beatmapsets->is_cover = false;
         $beatmapsets->update();
     }

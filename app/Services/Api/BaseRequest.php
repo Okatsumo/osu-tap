@@ -29,7 +29,7 @@ class BaseRequest
         $proxy_url = '';
 
         if ($this->proxy) {
-            $proxy_url = $this->proxy->type->name.'://' .$this->proxy->login.':' .$this->proxy->password.'@' .$this->proxy->host.':' .$this->proxy->port;
+            $proxy_url = $this->proxy->type->name.'://'.$this->proxy->login.':'.$this->proxy->password.'@'.$this->proxy->host.':'.$this->proxy->port;
         }
 
         $http_client = new Client([
@@ -37,7 +37,7 @@ class BaseRequest
             'headers' => [
                 'User-Agent' => $this->user_agent,
                 'Authorization' => 'Bearer '.$this->access_token,
-                'Accept'        => 'application/json'
+                'Accept'        => 'application/json',
             ],
         ]);
 

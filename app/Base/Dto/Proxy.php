@@ -11,6 +11,6 @@ final class Proxy
         public string $host,
         public string $login,
         public string $password,
-        public int    $port,
-    ){}
+        public int $port,
+    ) {}
 }

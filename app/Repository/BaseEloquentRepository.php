@@ -7,7 +7,6 @@ use Illuminate\Database\Eloquent\Model;
 
 class BaseEloquentRepository
 {
-
     protected string $modelClass;
     protected Model $model;
 

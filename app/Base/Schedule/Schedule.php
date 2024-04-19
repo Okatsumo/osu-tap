@@ -3,12 +3,13 @@
 namespace App\Base\Schedule;
 
 use Illuminate\Console\Scheduling\Schedule as SystemSchedule;
+
 class Schedule
 {
-    private \Illuminate\Console\Scheduling\Schedule $schedule;
+    private SystemSchedule $schedule;
 
     /**
-     *  Запуск очередей
+     *  Запуск очередей.
      */
     public function run(SystemSchedule $schedule): void
     {
