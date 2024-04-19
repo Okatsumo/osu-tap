@@ -26,7 +26,7 @@ class Throttle implements ApiThrottle
 
     /**
      * Проверка разрешения на обращение к api.
-     * Если true, то тротлинг активен, в ином случае будет возвращено false
+     * Если true, то тротлинг активен, в ином случае будет возвращено false.
      * @return bool
      */
     public function check(): bool
@@ -39,14 +39,14 @@ class Throttle implements ApiThrottle
                 return true;
             }
 
-            /**
+            /*
              * Количество отправленных запросов к api не привышает заданное количество.
              */
             if ($this->cache->tags('osu')->get($key) < $this->throttle_settings['attempt_count']) {
                 return false;
             } else {
 
-                /**
+                /*
                  * Время блокировки подошло к концу.
                  */
                 if ($this->cache->tags('osu')->get($key.':TimeOut') + $this->throttle_settings['time_out'] < time()) {
@@ -84,7 +84,7 @@ class Throttle implements ApiThrottle
             $count = $this->getCount();
             $attemptCount = $this->throttle_settings['attempt_count'];
 
-            /**
+            /*
              * Троттлинг активен.
              */
             if ($count > $attemptCount) {
@@ -92,13 +92,13 @@ class Throttle implements ApiThrottle
 
                 if ($this->cache->tags('osu')->has($failTimeOutKey)) {
                     /**
-                     * Увеличение времени блокировки для последующих задач
+                     * Увеличение времени блокировки для последующих задач.
                      */
                     $multiplier = ceil($count / $attemptCount);
                     $timeOut = $this->cache->tags('osu')->get($failTimeOutKey) + ($multiplier * $this->throttle_settings['time_out']) - time();
                 } else {
                     /**
-                     * Первое нарушение, устанавливаем время блокировки
+                     * Первое нарушение, устанавливаем время блокировки.
                      */
                     $timeOut = $this->cache->tags('osu')->get($key.':TimeOut') + $this->throttle_settings['time_out'] - time();
                     $this->cache->tags('osu')->put($failTimeOutKey, time() + $timeOut, $timeOut);
@@ -107,7 +107,7 @@ class Throttle implements ApiThrottle
                 return $timeOut;
             }
 
-            /**
+            /*
              * Если троттлинг не активен, возвращаем время до окончания текущего TimeOut
              */
             return $this->cache->tags('osu')->get($key.':TimeOut') + $this->throttle_settings['time_out'] - time();

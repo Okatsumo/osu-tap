@@ -6,7 +6,6 @@ use Livewire\Component;
 
 class BeatmapsItem extends Component
 {
-
     public string $title;
     public string $artist;
 

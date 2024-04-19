@@ -50,7 +50,7 @@ class TokensHandler
 
     protected function initialClient(array $params = []): void
     {
-        $proxy_url = $this->account->proxy->type->name.'://' .$this->account->proxy->login.':' .$this->account->proxy->password.'@' .$this->account->proxy->host.':' .$this->account->proxy->port;
+        $proxy_url = $this->account->proxy->type->name.'://'.$this->account->proxy->login.':'.$this->account->proxy->password.'@'.$this->account->proxy->host.':'.$this->account->proxy->port;
 
         $this->http_client = new Client([
             'proxy' => $proxy_url,
@@ -58,7 +58,7 @@ class TokensHandler
             'headers' => [
                 'User-Agent'    => $this->account->user_agent,
                 'Authorization' => 'Bearer '.$this->account->access_token,
-                'Accept'        => 'application/x-www-form-urlencoded'
+                'Accept'        => 'application/x-www-form-urlencoded',
             ],
         ]);
     }
@@ -76,5 +76,4 @@ class TokensHandler
     {
         return $this->account;
     }
-
 }

@@ -2,7 +2,6 @@
 
 namespace App\Repository;
 
-use App\Base\Dto\AccountTokensDto;
 use App\Base\Dto\Proxy;
 use App\Services\Osu\Api\TokensHandler;
 use App\Services\Osu\Dto\OsuAccount;
@@ -37,7 +36,7 @@ class OsuAccountRepository
                 $active_ids[] += $id;
             } else {
 
-                if ($item < $this->throttle_settings['attempt_count'] ) {
+                if ($item < $this->throttle_settings['attempt_count']) {
                     $active_ids[] += $id;
                 }
             }

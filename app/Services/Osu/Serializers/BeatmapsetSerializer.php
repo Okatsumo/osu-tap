@@ -27,7 +27,7 @@ class BeatmapsetSerializer
             'storyboard'        => $data['storyboard'],
             'submitted_date'    => Carbon::parse($data['submitted_date']),
             'tags'              => $data['tags'],
-            'last_updated'      => Carbon::parse($data['last_updated'])
+            'last_updated'      => Carbon::parse($data['last_updated']),
         ];
     }
 }

@@ -3,14 +3,10 @@
 namespace App\Jobs\Parser\Beatmapsets;
 
 use App\Base\Api\FileSaver;
-use App\Base\Enums\HttpRequestMethods;
 use App\Exceptions\OperationError;
-use App\Repository\BeatmapsetsRepository;
 use App\Services\Api\ApiThrottle;
 use App\Services\Api\BaseRequest;
-use GuzzleHttp\Exception\GuzzleException;
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
@@ -33,7 +29,7 @@ class SavePreview extends BaseOsuParser
     public int $tries = 0;
 
     /**
-     * Тротлинг api
+     * Тротлинг api.
      */
     protected ApiThrottle $apiThrottle;
 
@@ -61,11 +57,9 @@ class SavePreview extends BaseOsuParser
                 $file->fullName = 'preview.'.$file->type->name;
             }
 
-
             $fileSaver = app(FileSaver::class);
             $fileSaver->setDisk('beatmapsets');
             $fileSaver->save($file, (string) $this->id);
-
 
         } catch (OperationError) {
             $this->disablePreview();

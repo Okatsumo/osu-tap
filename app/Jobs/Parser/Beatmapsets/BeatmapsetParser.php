@@ -6,7 +6,6 @@ use App\Exceptions\OperationError;
 use App\Services\Osu\Api\Beatmapsets;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Log;
-use function Laravel\Prompts\error;
 
 class BeatmapsetParser extends BaseOsuParser
 {
@@ -72,7 +71,7 @@ class BeatmapsetParser extends BaseOsuParser
                 'storyboard'        => $data->storyboard,
                 'submitted_date'    => Carbon::parse($data->submitted_date),
                 'tags'              => $data->tags,
-                'last_updated'      => Carbon::parse($data->last_updated)
+                'last_updated'      => Carbon::parse($data->last_updated),
             ]);
         } catch (OperationError $ex) {
 
@@ -85,7 +84,6 @@ class BeatmapsetParser extends BaseOsuParser
             }
         }
     }
-
 
     public function errorLog(\Exception $ex)
     {

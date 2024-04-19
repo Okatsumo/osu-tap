@@ -5,7 +5,6 @@ namespace App\Jobs\Parser\Beatmapsets;
 use App\Contracts\Jobs\BaseOsuParser as Contract;
 use App\Repository\BeatmapsetsRepository;
 use App\Repository\OsuAccountRepository;
-use App\Services\Osu\Api\Beatmapsets;
 use App\Services\Osu\Api\Throttle;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -40,7 +39,7 @@ abstract class BaseOsuParser implements ShouldQueue, Contract
         $this->prepare();
         $account = $this->setAccount();
 
-        /**
+        /*
          * Нет активного аккаунта, откладывание задачи.
          */
         if (is_null($account)) {
@@ -49,7 +48,7 @@ abstract class BaseOsuParser implements ShouldQueue, Contract
         } else {
             $this->throttle->addCount();
 
-            /**
+            /*
              * Аккаунт находится в тротлинге.
              */
             if ($this->throttle->check()) {
@@ -59,13 +58,13 @@ abstract class BaseOsuParser implements ShouldQueue, Contract
                 $account = $this->setAccount();
             }
 
-            /**
+            /*
              * Есть активный аккаунт.
              */
             if (!is_null($account)) {
                 $this->parse();
             } else {
-                /**
+                /*
                  * Аккаунтов не нашлось, откладывание задачи
                  */
                 $this->release($this->throttle->getTimeOut());
