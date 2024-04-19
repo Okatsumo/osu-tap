@@ -35,7 +35,7 @@ class parser extends Command
      */
     public function handle(): void
     {
-//        $parser = new \App\Services\Osu\Parser\Parser();
-//        $parser->start();
+        $parser = new \App\Services\Osu\Parser\Parser();
+        $parser->start();
     }
 }
