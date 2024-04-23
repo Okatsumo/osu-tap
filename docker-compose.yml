@@ -1,4 +1,4 @@
-version: '3'
+version: '3.8'
 
 networks:
   osu_tap_network:
@@ -14,16 +14,6 @@ services:
           context: .
           dockerfile: php.dockerfile
       user: "${APP_UID:-10001}:${APP_GID:-10001}"
-      environment:
-          APP_DEBUG: 'true'
-          APP_ENV: local
-          REDIS_HOST: osu-tap-redis-1
-          REDIS_PASSWORD: forge
-          DB_HOST: mysql
-          DB_CONNECTION: mysql
-          DB_DATABASE: osutap
-          DB_USERNAME: forge
-          DB_PASSWORD: forge
       volumes:
           - /etc/passwd:/etc/passwd:ro
           - /etc/group:/etc/group:ro
@@ -71,13 +61,15 @@ services:
     tty: true
     ports:
       - "3306:3306"
+    env_file:
+        - .env
     environment:
-      MYSQL_DATABASE: osutap
-      MYSQL_USER: ${MYSQL_USER:-forge}
-      MYSQL_PASSWORD: ${MYSQL_PASSWORD:-forge}
+      MYSQL_DATABASE: ${DB_DATABASE}
+      MYSQL_USER: ${DB_USERNAME}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-forge}
     healthcheck: # Healthcheck docs: <https://docs.docker.com/engine/reference/builder/#healthcheck>
-        test: [ "CMD", 'mysqladmin', 'ping', '-u', 'osutap', '-p$$MYSQL_PASSWORD' ]
+        test: mysqladmin ping -h 127.0.0.1 -u $$DB_USERNAME --password=$$DB_PASSWORD
         interval: 15s
         timeout: 15s
         start_period: 10s
