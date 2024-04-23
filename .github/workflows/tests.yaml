@@ -24,14 +24,14 @@ jobs: # Docs: <https://help.github.com/en/articles/workflow-syntax-for-github-ac
     timeout-minutes: 3
     steps:
       - uses: actions/checkout@v4
-        with: {fetch-depth: 0, version: 8.16.0}
+        with: {fetch-depth: 0}
 
       - name: Check for GitLeaks
         with: {version: 8.16.0}
         uses: gacts/gitleaks@v1.2.0 # Action page: <https://github.com/gacts/gitleaks>
 
-  check-style:
-    name: Run check style (PHP cs fixer)
+  code-style:
+    name: Run check PHP Unit tests
     runs-on: ubuntu-20.04
     timeout-minutes: 10
     steps:
@@ -41,24 +41,25 @@ jobs: # Docs: <https://help.github.com/en/articles/workflow-syntax-for-github-ac
       - name: Setup PHP, with composer and extensions
         uses: shivammathur/setup-php@v2
         with:
-          php-version: '8.2'
+          php-version: '8.3'
 
       - name: Get Composer Cache Directory
         id: composer-cache
-        run: echo "::set-output name=dir::$(composer config cache-files-dir)"
+        run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
 
       - name: Cache dependencies
         uses: actions/cache@v4
         with:
           path: ${{ steps.composer-cache.outputs.dir }}
-          key: ${{ runner.os }}-composer-${{ matrix.setup }}-${{ hashFiles('**/composer.json') }}
+          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
           restore-keys: ${{ runner.os }}-composer-
 
       - name: Install Composer dependencies
         run: composer update -n --prefer-dist --no-progress --ansi && composer info
 
-      - name: Run php-cs-fixer
+      - name: Run code style check
         run: composer check-style
+
 
   php-unit:
     name: Run check PHP Unit tests
@@ -71,21 +72,20 @@ jobs: # Docs: <https://help.github.com/en/articles/workflow-syntax-for-github-ac
       - name: Setup PHP, with composer and extensions
         uses: shivammathur/setup-php@v2
         with:
-          php-version: '8.2'
+          php-version: '8.3'
 
       - name: Get Composer Cache Directory
         id: composer-cache
-        run: echo "::set-output name=dir::$(composer config cache-files-dir)"
+        run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
 
       - name: Cache dependencies
         uses: actions/cache@v4
         with:
           path: ${{ steps.composer-cache.outputs.dir }}
-          key: ${{ runner.os }}-composer-${{ matrix.setup }}-${{ hashFiles('**/composer.json') }}
+          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
           restore-keys: ${{ runner.os }}-composer-
 
       - name: Install Composer dependencies
         run: composer update -n --prefer-dist --no-progress --ansi && composer info
-
-      - name: Run tests
+      - name: Run PHPUnit tests
         run: composer unit-test
