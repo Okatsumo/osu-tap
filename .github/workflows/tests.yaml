@@ -31,7 +31,7 @@ jobs: # Docs: <https://help.github.com/en/articles/workflow-syntax-for-github-ac
         uses: gacts/gitleaks@v1.2.0 # Action page: <https://github.com/gacts/gitleaks>
 
   code-style:
-    name: Run check PHP Unit tests
+    name: Run code style check
     runs-on: ubuntu-20.04
     timeout-minutes: 10
     steps:
@@ -57,14 +57,27 @@ jobs: # Docs: <https://help.github.com/en/articles/workflow-syntax-for-github-ac
       - name: Install Composer dependencies
         run: composer update -n --prefer-dist --no-progress --ansi && composer info
 
-      - name: Run code style check
+      - name: Code style check
         run: composer check-style
 
 
-  php-unit:
-    name: Run check PHP Unit tests
-    runs-on: ubuntu-20.04
+  tests:
+    name: Run PHPUnit/Feature tests
+    runs-on: ubuntu-latest
     timeout-minutes: 10
+
+    services:
+      mysql:
+        image: mysql:5.7
+        env:
+          MYSQL_DATABASE: osutap
+          MYSQL_ROOT_PASSWORD: forge
+          MYSQL_PASSWORD: forge
+          MYSQL_USER: forge
+        ports:
+          - 33306:3306
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
+
     steps:
       - name: Check out code
         uses: actions/checkout@v4
@@ -87,5 +100,16 @@ jobs: # Docs: <https://help.github.com/en/articles/workflow-syntax-for-github-ac
 
       - name: Install Composer dependencies
         run: composer update -n --prefer-dist --no-progress --ansi && composer info
-      - name: Run PHPUnit tests
-        run: composer unit-test
+
+      - name: Prepare Laravel Application
+        run: |
+          cp .env.example .env
+          sed -i 's/CACHE_DRIVER=redis/CACHE_DRIVER=file/' .env
+          php artisan key:generate
+          php artisan config:clear
+          php artisan migrate
+
+      - name: Run tests
+        env:
+          APP_ENV: local
+        run: php artisan test
