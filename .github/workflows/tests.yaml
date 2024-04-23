@@ -99,17 +99,27 @@ jobs: # Docs: <https://help.github.com/en/articles/workflow-syntax-for-github-ac
           restore-keys: ${{ runner.os }}-composer-
 
       - name: Install Composer dependencies
-        run: composer update -n --prefer-dist --no-progress --ansi && composer info
+        run: composer install -n --prefer-dist --no-progress --ansi && composer info
 
       - name: Prepare Laravel Application
         run: |
           cp .env.example .env
           sed -i 's/CACHE_DRIVER=redis/CACHE_DRIVER=file/' .env
+          sed -i 's/SESSION_DRIVER=redis/SESSION_DRIVER=file/' .env
           php artisan key:generate
-          php artisan config:clear
           php artisan migrate
+
+      - name: Run building frontend
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.x'
+      - run: |
+          npm install
+          npm run build
+          echo $(ls ./public/build)
 
       - name: Run tests
         env:
           APP_ENV: local
-        run: php artisan test
+        run: |
+          php artisan test
