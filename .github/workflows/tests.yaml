@@ -118,8 +118,16 @@ jobs: # Docs: <https://help.github.com/en/articles/workflow-syntax-for-github-ac
           npm run build
           echo $(ls ./public/build)
 
-      - name: Run tests
+      - name: Run Unit tests
         env:
           APP_ENV: local
+          RUNNING_IN_CI: true
         run: |
-          php artisan test
+          vendor/bin/phpunit --testsuite Unit
+
+      - name: Run Feature tests
+        env:
+          APP_ENV: local
+          RUNNING_IN_CI: true
+        run: |
+          vendor/bin/phpunit --testsuite Feature
