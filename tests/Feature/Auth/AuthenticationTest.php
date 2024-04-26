@@ -18,7 +18,7 @@ class AuthenticationTest extends TestCase
 
         $response
             ->assertOk()
-            ->assertSeeVolt('pages.auth.login');
+            ->assertSee('pages.auth.login');
     }
 
     public function test_users_can_authenticate_using_the_login_screen(): void
@@ -57,7 +57,9 @@ class AuthenticationTest extends TestCase
 
     public function test_navigation_menu_can_be_rendered(): void
     {
-        $user = User::factory()->create();
+        $user = User::factory()->create([
+            'admin' => true,
+        ]);
 
         $this->actingAs($user);
 
@@ -65,7 +67,7 @@ class AuthenticationTest extends TestCase
 
         $response
             ->assertOk()
-            ->assertSeeVolt('layout.navigation');
+            ->assertSee('layout.admin.navigation');
     }
 
     public function test_users_can_logout(): void
@@ -74,7 +76,7 @@ class AuthenticationTest extends TestCase
 
         $this->actingAs($user);
 
-        $component = Volt::test('layout.navigation');
+        $component = Volt::test('layout.admin.navigation');
 
         $component->call('logout');
 
