@@ -23,7 +23,7 @@ class EmailVerificationTest extends TestCase
         $response = $this->actingAs($user)->get('/verify-email');
 
         $response
-            ->assertSeeVolt('pages.auth.verify-email')
+            ->assertSee('pages.auth.verify-email')
             ->assertStatus(200);
     }
 
