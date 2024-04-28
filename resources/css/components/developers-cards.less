@@ -1,0 +1,61 @@
+.developers-cards {
+    display: flex;
+    flex-wrap: wrap;
+
+    .developers-cards__label{
+        display: block;
+        max-width: 162px;
+        word-break: break-all;
+        white-space: nowrap
+    }
+
+    .developers-cards--items {
+        display: flex;
+        justify-content: flex-start;
+        align-items: center;
+
+        .developers-cards--card {
+            position: relative;
+            margin: 6px 14px 6px 14px;
+            padding: 12px 44px 12px 10px;
+            background-color: @primary-color;
+            border-radius: 14px;
+
+            .developers-cards--card__profile {
+                display: flex;
+                flex-wrap: nowrap;
+                justify-content: space-between;
+                align-items: center;
+
+                .developers-cards__avatar {
+                    width: 30px;
+                    height: auto;
+                    border-radius: 14px;
+                    margin-right: 12px;
+                }
+            }
+
+            .developers-cards--card__tag {
+                background-color: @accent-color;
+                border-radius: 14px;
+                padding: 4px;
+                position: absolute;
+                right: -24px;
+                top: -22px;
+                z-index: 1;
+            }
+        }
+    }
+
+
+}
+
+
+@media (max-width: 770px) {
+    .developers-cards {
+        .developers-cards--items {
+            overflow: auto;
+            width: 100%;
+        }
+    }
+}
