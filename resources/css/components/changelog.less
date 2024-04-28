@@ -1,0 +1,56 @@
+.changelog {
+    .changelog--title {
+        background-color: @accent-color;
+        padding: 12px;
+        border-radius: 12px 12px 0 0;
+
+        .changelog--title__label {
+            font-weight: bold;
+            font-size: 20px;
+        }
+    }
+
+    .changelog--list {
+        background-color: @primary-color;
+        display: flex;
+        overflow: auto;
+        border-radius: 0 0 12px 12px;
+
+        .changelog__item {
+            margin: 20px;
+            display: flex;
+            align-items: center;
+            min-width: 486px;
+
+            .title {
+                margin-right: 28px;
+                font-weight: bold;
+                font-size: 18px;
+                position: relative;
+            }
+            .title:before {
+                content: '';
+                display: block;
+                width: 4px;
+                height: 68px;
+                position: absolute;
+                top: -24px;
+                right: -16px;
+                background-color: @white-color;
+            }
+        }
+    }
+}
+
+.changelog--list::-webkit-scrollbar {
+    width: 24px;
+}
+
+.changelog--list::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.changelog--list::-webkit-scrollbar-thumb {
+    background-color: @accent-color; /* Цвет бегунка */
+    border-radius: 20px; /* Округление бегунка */
+}
