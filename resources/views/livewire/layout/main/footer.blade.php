@@ -9,8 +9,8 @@
         <div class="footer__col">
             <h1>Навигация</h1>
             <ul>
-                <li><a href="#">Карты</a></li>
-                <li><a href="#">Скоры</a></li>
+                <li><x-nav-link :href="route('maps')" :active="request()->routeIs('maps')">Карты</x-nav-link></li>
+                <li><x-nav-link :href="route('scores')" :active="request()->routeIs('scores')">Скоры</x-nav-link></li>
             </ul>
         </div>
         <div class="footer__col">
