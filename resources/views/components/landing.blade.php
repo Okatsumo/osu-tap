@@ -12,7 +12,7 @@
             <button class="button button-pink landing--bottom__button">
                 Хочу фармить
             </button>
-            <button class="button button-violet landing--bottom__button">
+            <button href="{{route('maps')}}" wire:navigate="wire:navigate" class="button button-violet landing--bottom__button">
                 Начать поиск
             </button>
         </div>

@@ -13,7 +13,7 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::view('/', 'home')->name('home');
+Route::view('/', 'livewire.pages.home')->name('home');
 Route::view('/scores', 'scores')->name('scores');
 Route::get('/maps', [App\Http\Controllers\BeatmapsController::class, 'beatmaps'])->name('maps');
 Route::view('/users', 'users')->name('users');
