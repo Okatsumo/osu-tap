@@ -2,12 +2,12 @@
 
 namespace App\Livewire;
 
+use App\Models\Beatmapset;
 use Livewire\Component;
 
 class BeatmapsItem extends Component
 {
-    public string $title;
-    public string $artist;
+    public Beatmapset $beatmapset;
 
     public function render()
     {

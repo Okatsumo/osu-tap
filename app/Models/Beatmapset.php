@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Storage;
 
 class Beatmapset extends Model
 {
@@ -38,5 +39,31 @@ class Beatmapset extends Model
     public function beatmaps(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
     {
         return $this->belongsToMany(Beatmap::class);
+    }
+
+    protected function getFile($path)
+    {
+        if (!$this->is_cover) {
+            return '/assets/map_cover.jpg';
+        }
+
+        $disk = Storage::disk('beatmapsets');
+
+        if ($disk->exists($path)) {
+            return $disk->url($path);
+
+        }
+
+        return '/assets/map_cover.jpg';
+    }
+
+    public function getCoverAttribute(): string
+    {
+        return $this->getFile($this->id.'/cover.jpg');
+    }
+
+    public function getCardAttribute(): string
+    {
+        return $this->getFile($this->id.'/card.jpg');
     }
 }

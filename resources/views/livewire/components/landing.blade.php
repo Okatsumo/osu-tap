@@ -1,4 +1,4 @@
-<div class="landing" style="background-image: linear-gradient(to right, rgb(26 26 26 / 70%) 0 100%), url(https://assets.ppy.sh/beatmaps/2116408/covers/cover.jpg?1711581881)">
+<div class="landing" style="background-image: linear-gradient(to right, rgb(26 26 26 / 70%) 0 100%), url({{$background_url}})">
 
 
     <h1 class="landing--text">Зеркало карт с возможностью просмотра скоров, а так же легкий поиск фармилок для <span class="landing--text__accent">OSU!</span></h1>

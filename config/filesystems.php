@@ -47,7 +47,7 @@ return [
         'beatmapsets' => [
             'driver' => 'local',
             'root' => storage_path('app/public/beatmapsests'),
-            'url' => env('APP_URL').'/storage/public/beatmapsests',
+            'url' => env('APP_URL').'/public/storage/beatmapsests',
             'visibility' => 'public',
             'throw' => false,
         ],
