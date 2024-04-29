@@ -27,7 +27,7 @@ return new class extends Migration
             $table->string('title_unicode');
             $table->integer('user_id');
             $table->boolean('video')->default(false);
-            $table->float('bpm');
+            $table->float('bpm', 10);
             $table->integer('ranked')->nullable(false)->default(0);
             $table->dateTime('ranked_date')->default(null)->nullable();
             $table->boolean('storyboard')->nullable(false);

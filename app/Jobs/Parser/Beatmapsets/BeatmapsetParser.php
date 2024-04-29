@@ -27,10 +27,10 @@ class BeatmapsetParser extends BaseOsuParser
             $this->save($beatmapset);
 
             foreach ($beatmapset->covers as $url) {
-                SaveCover::dispatch($url, $beatmapset->id);
+                SaveCover::dispatch($url, $beatmapset->id)->onQueue('parser');
             }
 
-            SavePreview::dispatch($beatmapset->preview_url, $beatmapset->id);
+            SavePreview::dispatch($beatmapset->preview_url, $beatmapset->id)->onQueue('parser');
         }
         catch (OperationError $ex) {
             if ($ex->getCode() !== 502) {

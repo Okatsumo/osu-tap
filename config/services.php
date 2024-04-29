@@ -37,7 +37,7 @@ return [
         'access_token_url'  => env('OSU_AUTH_ACCESS_TOKEN_URL', 'https://osu.ppy.sh/oauth/token'),
         'scopes'            => env('OSU_SCOPES', 'public'),
         'throttle_settings' => [
-            'attempt_count' => 199,
+            'attempt_count' => 120,
             'time_out' => 60,
         ],
     ],
