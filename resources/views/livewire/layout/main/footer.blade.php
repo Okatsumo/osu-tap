@@ -9,8 +9,8 @@
         <div class="footer__col">
             <h1>Навигация</h1>
             <ul>
-                <li><a href="#">Карты</a></li>
-                <li><a href="#">Скоры</a></li>
+                <li><a href="{{route('maps')}}" wire:navigate="wire:navigate">Карты</a></li>
+                <li><a href="{{route('scores')}}" wire:navigate="wire:navigate">Скоры</a></li>
             </ul>
         </div>
         <div class="footer__col">

@@ -3,7 +3,7 @@
     <nav class="container">
         <div class="nav__menu">
             <div class="nav__menu--logo nav__col">
-                <x-nav-link :href="route('home')" :active="request()->routeIs('scores')"><i class="bi bi-globe-americas nav__menu--logo"></i></x-nav-link>
+                <a href="{{route('home')}}" wire:navigate="wire:navigate"><span class="nav__menu--logo__text">OSU!<span class="nav__menu--logo__text--accent">Tap</span></span></a>
             </div>
 
             <div class="nav__menu--item nav__col">

@@ -7,7 +7,7 @@ export default defineConfig({
             input: [
                 'resources/css/app.css',
                 'resources/css/admin.css',
-                'resources/css/styles.less',
+                'resources/css/main.less',
                 'resources/js/app.js',
             ],
             refresh: true,
@@ -17,7 +17,7 @@ export default defineConfig({
         host: '0.0.0.0',
         port: 8085,
         hmr: {
-            host: '172.19.0.9'
+            host: '172.18.0.9'
         }
     }
 });
