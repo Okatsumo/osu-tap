@@ -23,13 +23,13 @@ final class Parser
         $this->searchParser('id_asc');
         $this->searchParser('id_dec');
 
-        BeatmapsetsStartParser::dispatch();
+        BeatmapsetsStartParser::dispatch()->onQueue('parser');
     }
 
     private function searchParser(string $sort): void
     {
         for ($page = 1; $page <= 200; $page++) {
-            BeatmapsetsPageParser::dispatch($page, $sort, 'any');
+            BeatmapsetsPageParser::dispatch($page, $sort, 'any')->onQueue('parser');
         }
     }
 }

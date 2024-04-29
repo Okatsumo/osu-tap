@@ -21,7 +21,7 @@ class BeatmapsetsStartParser extends BaseOsuParser
         $endChunk = $startChunk + 500;
 
         while ($startChunk <= $endChunk) {
-            BeatmapsetsParser::dispatch($startChunk, $endChunk);
+            BeatmapsetsParser::dispatch($startChunk, $endChunk)->onQueue('parser');
 
             $startChunk += $chunkSize;
             $endChunk = min($endChunk + $chunkSize, $endId);

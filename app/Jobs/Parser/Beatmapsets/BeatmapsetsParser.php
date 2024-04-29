@@ -28,7 +28,7 @@ class BeatmapsetsParser implements ShouldQueue
     public function handle(): void
     {
         for ($id = $this->startId; $id <= $this->endId; $id++) {
-            BeatmapsetParser::dispatch($id);
+            BeatmapsetParser::dispatch($id)->onQueue('parser');
         }
     }
 }

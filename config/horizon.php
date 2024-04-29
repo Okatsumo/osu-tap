@@ -180,6 +180,19 @@ return [
     */
 
     'defaults' => [
+        'supervisor-parser' => [
+            'connection' => 'redis',
+            'queue' => ['parser'],
+            'balance' => 'auto',
+            'autoScalingStrategy' => 'time',
+            'maxProcesses' => 1,
+            'maxTime' => 0,
+            'maxJobs' => 0,
+            'memory' => 128,
+            'tries' => 0,
+            'timeout' => 60,
+            'nice' => 0,
+        ],
         'supervisor-1' => [
             'connection' => 'redis',
             'queue' => ['default'],
@@ -197,13 +210,24 @@ return [
 
     'environments' => [
         'production' => [
+            'supervisor-parser' => [
+                'connection' => 'redis',
+                'queue' => ['parser'],
+                'balance' => 'auto',
+                'autoScalingStrategy' => 'time',
+                'minProcesses' => 1,
+                'maxProcesses' => 34,
+                'balanceMaxShift' => 2,
+                'balanceCooldown' => 3,
+                'tries' => 0,
+            ],
             'supervisor-1' => [
                 'connection' => 'redis',
                 'queue' => ['default'],
                 'balance' => 'auto',
                 'autoScalingStrategy' => 'time',
                 'minProcesses' => 1,
-                'maxProcesses' => 34,
+                'maxProcesses' => 6,
                 'balanceMaxShift' => 2,
                 'balanceCooldown' => 3,
                 'tries' => 3,
@@ -212,6 +236,9 @@ return [
 
         'local' => [
             'supervisor-1' => [
+                'maxProcesses' => 1,
+            ],
+            'supervisor-parser' => [
                 'maxProcesses' => 52,
             ],
         ],
