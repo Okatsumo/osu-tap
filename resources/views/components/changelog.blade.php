@@ -1,6 +1,6 @@
 <div class="changelog mt-2">
     <div class="changelog--title">
-        <h1 class="changelog--title__label">Обновления проекта</h1>
+        <h3 class="changelog--title__label">Обновления проекта</h3>
     </div>
 
     <div class="changelog--list">

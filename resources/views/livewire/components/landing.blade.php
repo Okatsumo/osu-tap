@@ -9,10 +9,10 @@
         </div>
 
         <div class="landing--bottom__navigation">
-            <x-button color="pink">
+            <x-button color="pink" classes="landing--bottom__button">
                 Хочу фармить
             </x-button>
-            <x-button :href="route('maps')" :wire_navigate="true">
+            <x-button :href="route('maps')" :wire_navigate="true" classes="landing--bottom__button">
                 Начать поиск
             </x-button>
         </div>
