@@ -58,6 +58,12 @@ body{
 .mt-2 {
     margin-top: 12px;
 }
+.mb-1 {
+    margin-bottom: 6px;
+}
+.mt-2 {
+    margin-bottom: 12px;
+}
 header {
     padding-bottom: 34px;
     background-size: 100%;
@@ -137,6 +143,7 @@ nav {
 .content {
     position: relative;
     min-height: 89vh;
+    margin-bottom: 16px;
 }
 .content__title {
     background: @primary-color;
@@ -151,41 +158,53 @@ nav {
 }
 .maps__search {
     background-color: @content-background-color;
-    padding: 12px;
+    padding: 24px 14px;
     display: grid;
+    background-size: cover;
 }
 .maps__search-filers {
-    padding-top: 12px;
-}
-.maps__search-filer__header {
-    min-width: 180px;
-    padding-right: 14px;
-    display: inline-block;
-    color: #B7B7B7;
-    font-weight: 700;
-    font-size: 14px;
+    padding-top: 24px;
 }
 @media (max-width: 900px){
     .maps__search-filer__header {
         width: 100%;
     }
 }
+
 .maps__search-filer {
     padding-bottom: 12px;
+
+    .maps__search-filer__header {
+        min-width: 120px;
+        padding-right: 14px;
+        display: inline-block;
+        color: @inactive-color;
+        font-weight: 700;
+        font-size: 14px;
+    }
+
+    .maps__search-filer__item {
+        font-weight: 700;
+        font-size: 14px;
+        text-decoration: none;
+        padding-right: 12px;
+        color: @inactive-color;
+    }
+    .search-filer__item--active {
+        color: @white-color;
+    }
+
+    .maps__search-filer__item:hover {
+        color: @accent-color;
+    }
 }
-.maps__search-filer__item {
-    font-weight: 700;
-    font-size: 14px;
-    text-decoration: none;
-    padding-right: 12px;
-}
-.maps__search-filer__item:hover {
-    color: @accent-color;
-}
+
 .beatmaps {
-    background-color: #221F2E;
+    background-color: @primary-color;
     padding: 12px;
+    border-radius: 0 0 14px 14px;
 }
+
 .beatmaps__item__images {
     display: flex;
     position: absolute;
@@ -199,7 +218,6 @@ nav {
 .beatmaps__item__artist {
     font-weight: bold;
     font-size: 12px;
-    //margin-left: 2px;
 }
 .beatmaps__item__images-information {
     background-image: url('/assets/map_card.jpg');
@@ -215,7 +233,6 @@ nav {
     align-items: center;
     background-image: url(/assets/map_cover.jpg);
     background-position: 50%;
-    background-size: auto auto;
     background-size: cover;
     border-radius: var(--border-radius,6px);
     display: inline-flex;
