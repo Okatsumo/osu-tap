@@ -5,16 +5,16 @@
 
     <div class="landing--bottom">
         <div class="landing--bottom__counter-block">
-            <h1 class="landing--bottom__text"> Всего карт: <span class="landing--bottom__counter">4158139</span></h1>
+            <h1 class="landing--bottom__text"> Всего карт: <span class="landing--bottom__counter">{{$count}}</span></h1>
         </div>
 
         <div class="landing--bottom__navigation">
-            <button class="button button-pink landing--bottom__button">
+            <x-button color="pink">
                 Хочу фармить
-            </button>
-            <button href="{{route('maps')}}" wire:navigate="wire:navigate" class="button button-violet landing--bottom__button">
+            </x-button>
+            <x-button :href="route('maps')" :wire_navigate="true">
                 Начать поиск
-            </button>
+            </x-button>
         </div>
     </div>
 </div>
