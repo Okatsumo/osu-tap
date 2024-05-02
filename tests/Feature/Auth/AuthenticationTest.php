@@ -63,7 +63,7 @@ class AuthenticationTest extends TestCase
 
         $this->actingAs($user);
 
-        $response = $this->get('/dashboard');
+        $response = $this->get('/dashboard/home');
 
         $response
             ->assertOk()

@@ -99,42 +99,94 @@ nav {
     justify-content: space-between;
     z-index: 1;
     position: relative;
-    .nav__menu {
+    .nav__col {
         display: flex;
         align-items: center;
     }
-    .nav__menu--item {
+    .nav__col--item {
         font-weight: bold;
-        text-transform: uppercase;
         text-decoration: none;
         color: #FFF;
-        font-size: 14px;
+        font-size: 16px;
+        margin: 0 6px;
     }
-    .nav__menu--link {
+    .nav__col--link {
         margin: 11px;
     }
+
+    .nav__col--menu {
+        .nav__link {
+            font-size: 24px;
+            cursor: pointer;
+        }
+
+        .nav__menu {
+            user-select: none;
+            position: fixed;
+            z-index: +1;
+            left: 0;
+            top: 92px;
+            display: none;
+            //transition: transform 0.1s cubic-bezier(0.06, 0.06, 0.94, 0.02) 0s;
+
+            .nav__menu--content {
+                background-color: #333;
+                width: 280px;
+                border-radius: 6px;
+                padding: 8px 12px;
+
+                .button {
+                    width: 100%;
+                    padding: 12px;
+                    margin: 4px;
+                }
+
+                .nav__menu--registration-text {
+                    text-align: center;
+
+                    .nav__menu--registration-text__button {
+                        color: @accent-color;
+                        cursor: pointer;
+                    }
+                }
+            }
+
+            .nav__menu--label {
+                text-align: center;
+            }
+        }
+
+        .nav__menu--bg {
+            background-color: #00000038;
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            display: none;
+        }
+    }
 }
-.nav__col {
-    text-align: center;
-}
-.nav__menu--link:hover > a {
+
+
+.nav__col--link:hover > a {
     color: @accent-color;
 }
-.nav__menu--logo {
+.nav__logo {
     margin-right: 24px;
     font-size: 36px;
     color: #FFF;
 
-    .nav__menu--logo__text{
+    .nav__logo__text {
         color: @white-color;
         font-weight: bold;
 
-        .nav__menu--logo__text--accent {
+        .nav__logo--text--accent {
             color: @accent-color;
         }
     }
 }
-.nav__menu--logo:hover {
+.nav__col--logo:hover {
     color: @accent-color;
 }
 .nav__user {

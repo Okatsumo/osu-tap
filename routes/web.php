@@ -18,9 +18,11 @@ Route::view('/scores', 'scores')->name('scores');
 Route::get('/maps', [App\Http\Controllers\BeatmapsController::class, 'beatmaps'])->name('maps');
 Route::view('/users', 'users')->name('users');
 
-Route::view('dashboard', 'dashboard')
-    ->middleware(['auth', 'verified', 'isAdmin'])
-    ->name('dashboard');
+Route::prefix('dashboard')->group(function () {
+    Route::view('home', 'dashboard')
+        ->middleware(['auth', 'verified', 'isAdmin'])
+        ->name('dashboard.home');
+});
 
 Route::view('profile', 'profile')
     ->middleware(['auth'])
