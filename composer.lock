@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "07a4355ef87fa124cc2f4b230a395561",
+    "content-hash": "14547f6991f39ee99a9620fc155059cc",
     "packages": [
         {
             "name": "brick/math",
@@ -2195,27 +2195,27 @@
         },
         {
             "name": "livewire/volt",
-            "version": "v1.6.0",
+            "version": "v1.6.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/livewire/volt.git",
-                "reference": "ba0dcf7d9ee689b790647ccdba376c97a5e07e7d"
+                "reference": "e5316b4f3508f759d0da6dc736331720ba14b8bb"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/livewire/volt/zipball/ba0dcf7d9ee689b790647ccdba376c97a5e07e7d",
-                "reference": "ba0dcf7d9ee689b790647ccdba376c97a5e07e7d",
+                "url": "https://api.github.com/repos/livewire/volt/zipball/e5316b4f3508f759d0da6dc736331720ba14b8bb",
+                "reference": "e5316b4f3508f759d0da6dc736331720ba14b8bb",
                 "shasum": ""
             },
             "require": {
-                "laravel/framework": "^10.27|^11.0",
+                "laravel/framework": "^10.38.2|^11.0",
                 "livewire/livewire": "^3.0",
                 "php": "^8.1"
             },
             "require-dev": {
                 "laravel/folio": "^1.1",
                 "mockery/mockery": "^1.6",
-                "orchestra/testbench": "^8.15.0",
+                "orchestra/testbench": "^8.15.0|^9.0",
                 "pestphp/pest": "^2.9.5",
                 "phpstan/phpstan": "^1.10"
             },
@@ -2263,7 +2263,7 @@
                 "issues": "https://github.com/livewire/volt/issues",
                 "source": "https://github.com/livewire/volt"
             },
-            "time": "2023-11-28T15:00:10+00:00"
+            "time": "2024-03-06T20:38:22+00:00"
         },
         {
             "name": "monolog/monolog",
