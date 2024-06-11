@@ -12,7 +12,7 @@
         "laravel/pulse": "^1.0@beta",
         "laravel/sanctum": "^3.3",
         "laravel/tinker": "^2.9",
-        "livewire/livewire": "^3.4",
+        "livewire/livewire": "^3.5",
         "livewire/volt": "^1.6",
         "predis/predis": "^2.2"
     },
