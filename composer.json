@@ -21,7 +21,7 @@
         "friendsofphp/php-cs-fixer": "^3.58",
         "laravel/breeze": "^1.29",
         "laravel/pint": "^1.16",
-        "laravel/sail": "^1.29",
+        "laravel/sail": "^1.30",
         "mockery/mockery": "^1.6.12",
         "nunomaduro/collision": "^7.0",
         "phpunit/phpunit": "^10.5",
