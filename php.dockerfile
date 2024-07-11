@@ -1,7 +1,7 @@
 # syntax=docker/dockerfile:1.2
 
 # fetch the Composer image, image page: <https://hub.docker.com/_/composer>
-FROM composer:2.7.6 as composer
+FROM composer:2.7.7 as composer
 
 # build application runtime, image page: <https://hub.docker.com/_/php>
 FROM php:8.3.8-fpm-alpine as runtime
