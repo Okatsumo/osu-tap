@@ -20,7 +20,7 @@
         "fakerphp/faker": "^1.23.1",
         "friendsofphp/php-cs-fixer": "^3.59",
         "laravel/breeze": "^1.29",
-        "laravel/pint": "^1.16",
+        "laravel/pint": "^1.17",
         "laravel/sail": "^1.29",
         "mockery/mockery": "^1.6.12",
         "nunomaduro/collision": "^7.0",
