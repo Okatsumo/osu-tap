@@ -28,7 +28,7 @@ jobs: # Docs: <https://help.github.com/en/articles/workflow-syntax-for-github-ac
 
       - name: Check for GitLeaks
         with: {version: 8.16.0}
-        uses: gacts/gitleaks@v1.2.0 # Action page: <https://github.com/gacts/gitleaks>
+        uses: gacts/gitleaks@v1.2.1 # Action page: <https://github.com/gacts/gitleaks>
 
   code-style:
     name: Run code style check
