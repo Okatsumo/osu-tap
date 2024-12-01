@@ -4,7 +4,7 @@
 FROM composer:2.8.2 as composer
 
 # build application runtime, image page: <https://hub.docker.com/_/php>
-FROM php:8.3.13-fpm-alpine as runtime
+FROM php:8.4.1-fpm-alpine as runtime
 
 # install composer, image page: <https://hub.docker.com/_/composer>
 COPY --from=composer /usr/bin/composer /usr/bin/composer
