@@ -9,7 +9,7 @@
         "guzzlehttp/guzzle": "^7.9",
         "laravel/framework": "^10.48",
         "laravel/horizon": "^5.29",
-        "laravel/pulse": "^1.0@beta",
+        "laravel/pulse": "^1.2@beta",
         "laravel/sanctum": "^3.3",
         "laravel/tinker": "^2.9",
         "livewire/livewire": "^3.5",
